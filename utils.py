@@ -3,8 +3,12 @@ import hashlib
 import urllib.parse
 import re
 import logging
+import traceback
 from datetime import datetime
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, 
+                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Simple encryption key - in production, use a proper secret key from environment variables
@@ -88,6 +92,9 @@ def obfuscate_url(url, expiry_hours=1):
         expiry_timestamp = (expiry_time.timestamp() + (expiry_hours * 3600))
         expiry_str = datetime.fromtimestamp(expiry_timestamp).strftime("%Y-%m-%d %H:%M:%S")
         
+        # デバッグログ出力
+        logger.debug(f"URL難読化: {url} -> {obfuscated[:20]}...")
+        
         # Return as dictionary with additional info
         return {
             "status": "success",
@@ -98,6 +105,7 @@ def obfuscate_url(url, expiry_hours=1):
     
     except Exception as e:
         logger.error(f"Error obfuscating URL: {str(e)}")
+        logger.error(traceback.format_exc())
         return None
 
 def deobfuscate_url(obfuscated, expiry_check=True):
@@ -132,6 +140,7 @@ def deobfuscate_url(obfuscated, expiry_check=True):
             encrypted = base64.urlsafe_b64decode(encoded)
         except Exception as e:
             logger.error(f"Base64 decoding error: {str(e)}")
+            logger.error(traceback.format_exc())
             return None
         
         # Decrypt
@@ -153,12 +162,18 @@ def deobfuscate_url(obfuscated, expiry_check=True):
                 if current_time - timestamp > 3600:
                     logger.warning("URL has expired (older than 1 hour)")
                     return None
+                
+            # デバッグログ出力
+            logger.debug(f"URL復号化: {obfuscated[:20]}... -> {url}")
+            
         except Exception as e:
             logger.error(f"Error parsing timestamp: {str(e)}")
+            logger.error(traceback.format_exc())
             return None
         
         return url
     
     except Exception as e:
         logger.error(f"Error deobfuscating URL: {str(e)}")
+        logger.error(traceback.format_exc())
         return None
