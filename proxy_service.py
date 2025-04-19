@@ -109,8 +109,13 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                     redirect_url = f"{base_url}{path_base}/{redirect_url}"
                     
                 # Obfuscate the redirect URL
-                obfuscated = obfuscate_url(redirect_url)
-                if obfuscated:
+                obfuscated_result = obfuscate_url(redirect_url)
+                if obfuscated_result:
+                    if isinstance(obfuscated_result, dict):
+                        obfuscated = obfuscated_result.get('obfuscated_url')
+                    else:
+                        obfuscated = obfuscated_result
+                        
                     proxy_redirect_url = f"/api/proxy/{obfuscated}"
                     response = Response("", status=resp.status_code)
                     response.headers['Location'] = proxy_redirect_url
@@ -158,8 +163,13 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             absolute_url = f"{base_url}{path_base}/{href}"
                         
                         # Obfuscate and create proxy URL
-                        obfuscated = obfuscate_url(absolute_url)
-                        if obfuscated:
+                        obfuscated_result = obfuscate_url(absolute_url)
+                        if obfuscated_result:
+                            if isinstance(obfuscated_result, dict):
+                                obfuscated = obfuscated_result.get('obfuscated_url')
+                            else:
+                                obfuscated = obfuscated_result
+                                
                             proxy_url = f"/api/proxy/{obfuscated}"
                             link['href'] = proxy_url
                 
@@ -182,8 +192,13 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             absolute_url = f"{base_url}{path_base}/{src}"
                         
                         # Obfuscate and create proxy URL
-                        obfuscated = obfuscate_url(absolute_url)
-                        if obfuscated:
+                        obfuscated_result = obfuscate_url(absolute_url)
+                        if obfuscated_result:
+                            if isinstance(obfuscated_result, dict):
+                                obfuscated = obfuscated_result.get('obfuscated_url')
+                            else:
+                                obfuscated = obfuscated_result
+                                
                             proxy_url = f"/api/proxy/{obfuscated}"
                             tag['src'] = proxy_url
                 
@@ -213,8 +228,13 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                 absolute_url = f"{base_url}{path_base}/{original_url}"
                             
                             # Obfuscate and create proxy URL
-                            obfuscated = obfuscate_url(absolute_url)
-                            if obfuscated:
+                            obfuscated_result = obfuscate_url(absolute_url)
+                            if obfuscated_result:
+                                if isinstance(obfuscated_result, dict):
+                                    obfuscated = obfuscated_result.get('obfuscated_url')
+                                else:
+                                    obfuscated = obfuscated_result
+                                
                                 proxy_url = f"/api/proxy/{obfuscated}"
                                 style = style.replace(f"url({original_url})", f"url({proxy_url})")
                                 
@@ -245,8 +265,13 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                     absolute_url = f"{base_url}{path_base}/{original_url}"
                                 
                                 # Obfuscate and create proxy URL
-                                obfuscated = obfuscate_url(absolute_url)
-                                if obfuscated:
+                                obfuscated_result = obfuscate_url(absolute_url)
+                                if obfuscated_result:
+                                    if isinstance(obfuscated_result, dict):
+                                        obfuscated = obfuscated_result.get('obfuscated_url')
+                                    else:
+                                        obfuscated = obfuscated_result
+                                        
                                     proxy_url = f"/api/proxy/{obfuscated}"
                                     meta['content'] = f"{delay}; url={proxy_url}"
                 
@@ -449,12 +474,27 @@ def direct_url_endpoint():
             time.sleep(wait_time)
         
         # Obfuscate the URL and redirect to the proxy endpoint
-        obfuscated = obfuscate_url(url)
-        if not obfuscated:
+        obfuscated_result = obfuscate_url(url)
+        if not obfuscated_result:
             return jsonify({"error": "Failed to process URL", "status": 500}), 500
+            
+        # Check if it's a dictionary (new format with expiry info) or just a string
+        if isinstance(obfuscated_result, dict):
+            obfuscated = obfuscated_result.get('obfuscated_url')
+            expiry = obfuscated_result.get('expiry')
+        else:
+            obfuscated = obfuscated_result
+            expiry = None
         
         proxy_url = f"/api/proxy/{obfuscated}"
-        return jsonify({"proxy_url": proxy_url})
+        
+        response = {"proxy_url": proxy_url}
+        
+        # Add expiry info if available
+        if expiry:
+            response["expiry"] = expiry
+            
+        return jsonify(response)
     
     except Exception as e:
         logger.error(f"Error in direct_url_endpoint: {str(e)}")
