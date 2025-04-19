@@ -359,14 +359,25 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
         else:
             # Handle streaming content and WebSocket upgrades
             if 'upgrade' in request.headers.get('connection', '').lower():
-                # WebSocket upgrade request
+                # Enhanced WebSocket upgrade request
                 response = Response(
                     response=resp.raw.read(),
                     status=resp.status_code,
                     direct_passthrough=True
                 )
-                response.headers['connection'] = 'upgrade'
-                response.headers['upgrade'] = request.headers['upgrade']
+                # Copy all upgrade-related headers
+                upgrade_headers = ['connection', 'upgrade', 'sec-websocket-key', 
+                                 'sec-websocket-version', 'sec-websocket-protocol',
+                                 'sec-websocket-extensions']
+                for header in upgrade_headers:
+                    if header in request.headers:
+                        response.headers[header] = request.headers[header]
+
+                # Add CORS headers for WebSocket
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
             elif any(t in content_type.lower() for t in ['video', 'audio', 'stream', 'octet-stream']):
                 # Streaming content
                 response = Response(
@@ -385,19 +396,22 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                     status=resp.status_code
                 )
 
-        # Copy headers from the proxied response
+        # Copy headers from the proxied response with enhanced async support
         excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
         for name, value in resp.headers.items():
             if name.lower() not in excluded_headers:
                 response.headers[name] = value
 
-        # Ensure proper content type with charset
-        if 'content-type' in resp.headers:
-            content_type = resp.headers['content-type']
-            if 'text/html' in content_type and 'charset' not in content_type:
-                response.headers['Content-Type'] = f"{content_type}; charset=utf-8"
-            else:
-                response.headers['Content-Type'] = content_type
+        # Add headers for IndexedDB and Service Worker support
+        response.headers['Service-Worker-Allowed'] = '/'
+        response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+        response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+        response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+
+        # Add cache control headers for dynamic content
+        if 'text/html' in content_type or 'application/json' in content_type:
+            response.headers['Cache-Control'] = 'no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
 
         return response
 
