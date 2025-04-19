@@ -82,6 +82,7 @@ def obfuscate_url(url):
 def deobfuscate_url(obfuscated):
     """
     Deobfuscate a URL by reversing the obfuscation process
+    URLs expire after 1 hour
     """
     try:
         # Check format and extract parts
@@ -108,8 +109,23 @@ def deobfuscate_url(obfuscated):
         # Decrypt
         decrypted = xor_encrypt(encrypted, ENCRYPTION_KEY).decode('utf-8')
         
-        # Remove timestamp
-        url = decrypted.split('|')[0]
+        # Extract timestamp and URL
+        parts = decrypted.split('|')
+        if len(parts) != 2:
+            logger.warning("Invalid decrypted URL format (missing timestamp)")
+            return None
+            
+        url = parts[0]
+        try:
+            timestamp = float(parts[1])
+            # Check if URL has expired (1 hour = 3600 seconds)
+            current_time = datetime.now().timestamp()
+            if current_time - timestamp > 3600:
+                logger.warning("URL has expired (older than 1 hour)")
+                return None
+        except Exception as e:
+            logger.error(f"Error parsing timestamp: {str(e)}")
+            return None
         
         return url
     

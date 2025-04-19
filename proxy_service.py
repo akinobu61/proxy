@@ -91,6 +91,31 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
             allow_redirects=False  # We'll handle redirects manually
         )
         
+        # Handle redirects manually
+        if resp.status_code in (301, 302, 303, 307, 308):
+            redirect_url = resp.headers.get('location')
+            if redirect_url:
+                logger.info(f"Handling redirect to {redirect_url}")
+                
+                # Convert relative redirect URLs to absolute
+                if redirect_url.startswith('/'):
+                    parsed_url = urllib.parse.urlparse(url)
+                    base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+                    redirect_url = f"{base_url}{redirect_url}"
+                elif not redirect_url.startswith(('http://', 'https://')):
+                    parsed_url = urllib.parse.urlparse(url)
+                    base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+                    path_base = '/'.join(parsed_url.path.split('/')[:-1]) if '/' in parsed_url.path else ''
+                    redirect_url = f"{base_url}{path_base}/{redirect_url}"
+                    
+                # Obfuscate the redirect URL
+                obfuscated = obfuscate_url(redirect_url)
+                if obfuscated:
+                    proxy_redirect_url = f"/api/proxy/{obfuscated}"
+                    response = Response("", status=resp.status_code)
+                    response.headers['Location'] = proxy_redirect_url
+                    return response
+        
         # Process the response based on content type
         content_type = resp.headers.get('content-type', '')
         
