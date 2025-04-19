@@ -130,7 +130,7 @@
                         <ul>
                             <li><strong>Method:</strong> GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD</li>
                             <li><strong>Path Parameter:</strong> obfuscated_url - The obfuscated URL obtained from the obfuscation endpoint</li>
-                            <li><strong>Query Parameter (Optional):</strong> wait - The number of seconds to wait before processing the request (default: 3 seconds)</li>
+                            <li><strong>Query Parameter (Optional):</strong> wait - The number of seconds to wait before processing the request (default: 1 second)</li>
                         </ul>
                         
                         <h5>Response</h5>
@@ -171,7 +171,7 @@
                         <ul>
                             <li><strong>Method:</strong> GET, POST</li>
                             <li><strong>Query Parameters:</strong> Standard search parameters (q, etc.)</li>
-                            <li><strong>Query Parameter (Optional):</strong> wait - The number of seconds to wait before processing the request (default: 3 seconds)</li>
+                            <li><strong>Query Parameter (Optional):</strong> wait - The number of seconds to wait before processing the request (default: 1 second)</li>
                         </ul>
                         
                         <h5>Response</h5>
@@ -199,7 +199,7 @@
                         <ul>
                             <li><strong>Method:</strong> GET</li>
                             <li><strong>Query Parameters:</strong> url - The URL to access through the proxy</li>
-                            <li><strong>Query Parameter (Optional):</strong> wait - The number of seconds to wait before processing the request (default: 3 seconds)</li>
+                            <li><strong>Query Parameter (Optional):</strong> wait - The number of seconds to wait before processing the request (default: 1 second)</li>
                         </ul>
                         
                         <h5>Response</h5>
@@ -334,7 +334,7 @@ async function obfuscateUrl(url) {
 }
 
 // Then use the proxy URL
-async function fetchWithProxy(url, waitTime = 3) {
+async function fetchWithProxy(url, waitTime = 1) {
   const { proxy_url } = await obfuscateUrl(url);
   
   // Use the proxy URL to fetch content, with custom wait time

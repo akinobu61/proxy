@@ -269,7 +269,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
         return jsonify({"error": f"Error proxying request: {str(e)}", "status": 502}), 502
 
 # ウェイト時間を追加（秒）
-DEFAULT_WAIT_TIME = 3  
+DEFAULT_WAIT_TIME = 1  
 
 @proxy_blueprint.route('/proxy/<path:obfuscated_url>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 @rate_limit
