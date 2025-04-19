@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy API - URL Obfuscation Service</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css">
+    <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i data-feather="shield"></i> Proxy API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/docs">API Docs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com" target="_blank">GitHub</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="text-center mb-5">
+                    <h1 class="display-4">URL Obfuscation Proxy API</h1>
+                    <p class="lead">Hide your original URLs while maintaining access to HTML, CSS, JavaScript, and more.</p>
+                </div>
+
+                <div class="card shadow-sm mb-5">
+                    <div class="card-body">
+                        <h2 class="card-title">Generate Obfuscated URL</h2>
+                        <div class="mb-3">
+                            <label for="urlInput" class="form-label">Enter a URL to obfuscate</label>
+                            <div class="input-group">
+                                <input type="url" class="form-control" id="urlInput" placeholder="https://example.com" required>
+                                <button class="btn btn-primary" id="obfuscateBtn" type="button">Obfuscate</button>
+                            </div>
+                            <div class="form-text">Enter a complete URL including the protocol (http:// or https://)</div>
+                        </div>
+                        
+                        <div id="resultArea" class="d-none">
+                            <div class="alert alert-success">
+                                <h4 class="alert-heading">URL Obfuscated Successfully!</h4>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label mb-1"><strong>Original URL:</strong></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="originalUrl" readonly>
+                                        <button class="btn btn-outline-secondary copy-btn" data-target="originalUrl">
+                                            <i data-feather="copy" class="copy-icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label mb-1"><strong>Obfuscated URL:</strong></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="obfuscatedUrl" readonly>
+                                        <button class="btn btn-outline-secondary copy-btn" data-target="obfuscatedUrl">
+                                            <i data-feather="copy" class="copy-icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label mb-1"><strong>Proxy URL (Use this to access the resource):</strong></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="proxyUrl" readonly>
+                                        <button class="btn btn-outline-secondary copy-btn" data-target="proxyUrl">
+                                            <i data-feather="copy" class="copy-icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <a href="#" id="testLink" target="_blank" class="btn btn-success mt-3">Test the Proxy URL</a>
+                            </div>
+                        </div>
+                        
+                        <div id="errorArea" class="d-none">
+                            <div class="alert alert-danger">
+                                <h4 class="alert-heading">Error</h4>
+                                <p id="errorMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <i data-feather="lock" class="feature-icon mb-3"></i>
+                                <h5 class="card-title">URL Obfuscation</h5>
+                                <p class="card-text">Hide your original URLs from prying eyes while maintaining full access to the content.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <i data-feather="file-text" class="feature-icon mb-3"></i>
+                                <h5 class="card-title">Multiple Content Types</h5>
+                                <p class="card-text">Support for HTML, CSS, JavaScript, JSON, and other common web content types.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                <i data-feather="shield" class="feature-icon mb-3"></i>
+                                <h5 class="card-title">Secure & Fast</h5>
+                                <p class="card-text">Encrypted URL handling with rate limiting protection and fast request routing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Proxy API</h5>
+                    <p>A secure URL obfuscation service</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>© 2023 Proxy API Service</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

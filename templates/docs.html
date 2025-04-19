@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - Proxy API</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css">
+    <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i data-feather="shield"></i> Proxy API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/docs">API Docs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com" target="_blank">GitHub</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="sticky-top pt-3">
+                    <div class="list-group">
+                        <a href="#introduction" class="list-group-item list-group-item-action">Introduction</a>
+                        <a href="#url-obfuscation" class="list-group-item list-group-item-action">URL Obfuscation</a>
+                        <a href="#proxy-endpoint" class="list-group-item list-group-item-action">Proxy Endpoint</a>
+                        <a href="#rate-limiting" class="list-group-item list-group-item-action">Rate Limiting</a>
+                        <a href="#error-handling" class="list-group-item list-group-item-action">Error Handling</a>
+                        <a href="#examples" class="list-group-item list-group-item-action">Examples</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h1 id="introduction">API Documentation</h1>
+                        <p class="lead">Proxy API is a service designed to obfuscate URLs while maintaining access to various content types.</p>
+                        <p>This documentation provides details on how to use the API endpoints, handle errors, and integrate with your applications.</p>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h2 id="url-obfuscation" class="mb-0">URL Obfuscation</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>Endpoint: <code>/api/obfuscate</code></h4>
+                        <p>This endpoint accepts a URL and returns an obfuscated version that can be used with the proxy endpoint.</p>
+                        
+                        <h5>Request</h5>
+                        <ul>
+                            <li><strong>Method:</strong> POST</li>
+                            <li><strong>Content-Type:</strong> application/json</li>
+                        </ul>
+                        
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Request Body</div>
+                            <div class="card-body">
+<pre><code>{
+  "url": "https://example.com/path/to/resource"
+}</code></pre>
+                            </div>
+                        </div>
+                        
+                        <h5>Response</h5>
+                        <p>On success, the API returns a JSON object with the following fields:</p>
+                        
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Success Response (200 OK)</div>
+                            <div class="card-body">
+<pre><code>{
+  "original_url": "https://example.com/path/to/resource",
+  "obfuscated_url": "encoded_string.checksum",
+  "proxy_url": "https://your-api.com/api/proxy/encoded_string.checksum"
+}</code></pre>
+                            </div>
+                        </div>
+                        
+                        <h5>Errors</h5>
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Error Response (400 Bad Request)</div>
+                            <div class="card-body">
+<pre><code>{
+  "error": "URL is required",
+  "status": 400
+}</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Error Response (400 Bad Request)</div>
+                            <div class="card-body">
+<pre><code>{
+  "error": "Invalid URL",
+  "status": 400
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h2 id="proxy-endpoint" class="mb-0">Proxy Endpoint</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>Endpoint: <code>/api/proxy/{obfuscated_url}</code></h4>
+                        <p>This endpoint accepts an obfuscated URL and forwards the request to the original destination.</p>
+                        
+                        <h5>Request</h5>
+                        <ul>
+                            <li><strong>Method:</strong> GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD</li>
+                            <li><strong>Path Parameter:</strong> obfuscated_url - The obfuscated URL obtained from the obfuscation endpoint</li>
+                        </ul>
+                        
+                        <h5>Response</h5>
+                        <p>The proxy endpoint returns the response from the original destination with appropriate headers and status code.</p>
+                        
+                        <h5>Errors</h5>
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Error Response (400 Bad Request)</div>
+                            <div class="card-body">
+<pre><code>{
+  "error": "Invalid obfuscated URL",
+  "status": 400
+}</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Error Response (502 Bad Gateway)</div>
+                            <div class="card-body">
+<pre><code>{
+  "error": "Error proxying request: {error details}",
+  "status": 502
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h2 id="rate-limiting" class="mb-0">Rate Limiting</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>To protect the service from abuse, rate limiting is applied to all API endpoints.</p>
+                        <ul>
+                            <li>Maximum 60 requests per minute per IP address</li>
+                            <li>When the rate limit is exceeded, the API returns a 429 Too Many Requests response</li>
+                        </ul>
+                        
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Rate Limit Exceeded Response (429 Too Many Requests)</div>
+                            <div class="card-body">
+<pre><code>{
+  "error": "Rate limit exceeded",
+  "status": 429
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h2 id="error-handling" class="mb-0">Error Handling</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>The API returns appropriate HTTP status codes and error messages for different types of errors:</p>
+                        
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Status Code</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>400 Bad Request</td>
+                                    <td>Invalid request parameters or URL</td>
+                                </tr>
+                                <tr>
+                                    <td>404 Not Found</td>
+                                    <td>Endpoint not found</td>
+                                </tr>
+                                <tr>
+                                    <td>429 Too Many Requests</td>
+                                    <td>Rate limit exceeded</td>
+                                </tr>
+                                <tr>
+                                    <td>500 Internal Server Error</td>
+                                    <td>Server-side error</td>
+                                </tr>
+                                <tr>
+                                    <td>502 Bad Gateway</td>
+                                    <td>Error proxying request to target URL</td>
+                                </tr>
+                                <tr>
+                                    <td>504 Gateway Timeout</td>
+                                    <td>Request to target URL timed out</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h2 id="examples" class="mb-0">Examples</h2>
+                    </div>
+                    <div class="card-body">
+                        <h5>Example 1: Obfuscate a URL</h5>
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">curl command</div>
+                            <div class="card-body">
+<pre><code>curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com"}' \
+  https://your-api.com/api/obfuscate</code></pre>
+                            </div>
+                        </div>
+
+                        <h5>Example 2: Using the Proxy</h5>
+                        <p>Once you have the obfuscated URL, you can use it with the proxy endpoint:</p>
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Browser</div>
+                            <div class="card-body">
+<pre><code>https://your-api.com/api/proxy/encoded_string.checksum</code></pre>
+                            </div>
+                        </div>
+
+                        <h5>Example 3: JavaScript Fetch API</h5>
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">JavaScript</div>
+                            <div class="card-body">
+<pre><code>// First, obfuscate the URL
+async function obfuscateUrl(url) {
+  const response = await fetch('/api/obfuscate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ url })
+  });
+  
+  return response.json();
+}
+
+// Then use the proxy URL
+async function fetchWithProxy(url) {
+  const { proxy_url } = await obfuscateUrl(url);
+  
+  // Use the proxy URL to fetch content
+  const response = await fetch(proxy_url);
+  return response;
+}
+
+// Example usage
+fetchWithProxy('https://example.com')
+  .then(response => response.text())
+  .then(html => console.log(html))
+  .catch(error => console.error('Error:', error));</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Proxy API</h5>
+                    <p>A secure URL obfuscation service</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>© 2023 Proxy API Service</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
