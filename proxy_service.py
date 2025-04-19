@@ -13,6 +13,15 @@ logger = logging.getLogger(__name__)
 
 proxy_blueprint = Blueprint('proxy', __name__, url_prefix='/api')
 
+# URLパスから'proxy'を削除するためのルート設定
+@proxy_blueprint.route('/<path:obfuscated_url>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
+@rate_limit
+def direct_proxy_endpoint(obfuscated_url):
+    """
+    Main proxy endpoint that accepts an obfuscated URL and forwards the request
+    """
+    return proxy_endpoint(obfuscated_url)
+
 # Simple in-memory rate limiting
 rate_limit_data = {
     'requests': {},
