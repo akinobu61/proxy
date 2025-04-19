@@ -1,6 +1,7 @@
 import time
 import logging
 import urllib.parse
+import traceback
 from functools import wraps
 from flask import Blueprint, request, Response, jsonify, current_app
 import requests
@@ -134,12 +135,12 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                 # This is a simple implementation and might need enhancement for complex pages
                 soup = BeautifulSoup(content, 'html.parser')
 
-                # Process all links
-                for link in soup.find_all(['a', 'link']):
+                # Process all links (a, link, area, base要素)
+                for link in soup.find_all(['a', 'link', 'area', 'base']):
                     href = link.get('href')
                     if href:
                         # Skip fragment-only links, javascript, mailto and tel links
-                        if href.startswith('#') or any(href.startswith(scheme) for scheme in ['javascript:', 'mailto:', 'tel:']):
+                        if href.startswith('#') or any(href.startswith(scheme) for scheme in ['javascript:', 'mailto:', 'tel:', 'data:']):
                             continue
 
                         try:
@@ -153,7 +154,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             normalized_url = urllib.parse.urljoin(final_url, href)
                             
                             # ログ出力（デバッグ用）
-                            print(f"リンク正規化: {href} → {normalized_url}")
+                            logger.debug(f"リンク正規化: {href} → {normalized_url}")
 
                             # URLを難読化
                             obfuscated_result = obfuscate_url(normalized_url)
@@ -182,78 +183,147 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                             onclick = onclick.replace(found_url, f'"/api/proxy/{obf_url}"')
                                     link['onclick'] = onclick
 
-                                # data-href属性の処理
-                                if link.has_attr('data-href'):
-                                    data_href = link['data-href']
-                                    normalized_data_url = urllib.parse.urljoin(final_url, data_href)
-                                    data_obfuscated = obfuscate_url(normalized_data_url)
-                                    if isinstance(data_obfuscated, dict):
-                                        data_obfuscated = data_obfuscated.get('obfuscated_url')
-                                    if data_obfuscated:
-                                        link['data-href'] = create_proxy_url(data_obfuscated)
-
-                                # data-url属性の処理
-                                if link.has_attr('data-url'):
-                                    data_url = link['data-url']
-                                    normalized_data_url = urllib.parse.urljoin(final_url, data_url)
-                                    data_obfuscated = obfuscate_url(normalized_data_url)
-                                    if isinstance(data_obfuscated, dict):
-                                        data_obfuscated = data_obfuscated.get('obfuscated_url')
-                                    if data_obfuscated:
-                                        link['data-url'] = create_proxy_url(data_obfuscated)
+                                # すべてのdata-*属性を処理
+                                for attr_name in list(link.attrs.keys()):
+                                    if attr_name.startswith('data-') and isinstance(link[attr_name], str):
+                                        attr_value = link[attr_name]
+                                        # URLのように見える値だけを処理
+                                        if ('://' in attr_value or attr_value.startswith('/')) and not attr_value.startswith('data:'):
+                                            try:
+                                                normalized_attr_url = urllib.parse.urljoin(final_url, attr_value)
+                                                attr_obfuscated = obfuscate_url(normalized_attr_url)
+                                                if isinstance(attr_obfuscated, dict):
+                                                    attr_obfuscated = attr_obfuscated.get('obfuscated_url')
+                                                if attr_obfuscated:
+                                                    link[attr_name] = create_proxy_url(attr_obfuscated)
+                                                    logger.debug(f"データ属性を処理: {attr_name}={attr_value} → {link[attr_name]}")
+                                            except Exception as e:
+                                                logger.warning(f"Failed to process data attribute {attr_name}: {str(e)}")
                         except Exception as e:
                             logger.warning(f"Failed to process link {href}: {str(e)}")
+                            logger.debug(traceback.format_exc())
                             continue
 
-                # Process all scripts, images, and other resources
-                for tag in soup.find_all(['script', 'img', 'iframe', 'source']):
-                    src = tag.get('src')
-                    if src and not src.startswith('data:'):  # Skip data: URLs
-                        # リダイレクト後のURLを使用して相対パスを解決
-                        final_url = resp.url
-                        # URLの完全な正規化
-                        absolute_url = urllib.parse.urljoin(final_url, src)
-                        # ログ出力（デバッグ用）
-                        print(f"ソース正規化: {src} → {absolute_url}")
+                # Process all scripts, images, videos, audio, objects, embeds, and other resources
+                for tag in soup.find_all(['script', 'img', 'iframe', 'source', 'video', 'audio', 'embed', 'object', 'input', 'track', 'applet', 'frame']):
+                    # 処理すべき属性のリスト（タグによって異なる）
+                    src_attrs = ['src', 'data', 'poster', 'srcset', 'codebase', 'cite', 'background', 'longdesc', 'usemap']
+                    
+                    # 各属性をチェックして処理
+                    for attr_name in src_attrs:
+                        if tag.has_attr(attr_name) and tag[attr_name] and not tag[attr_name].startswith('data:'):
+                            attr_value = tag[attr_name]
+                            try:
+                                # リダイレクト後のURLを使用して相対パスを解決
+                                final_url = resp.url
+                                # URLの完全な正規化
+                                absolute_url = urllib.parse.urljoin(final_url, attr_value)
+                                # ログ出力（デバッグ用）
+                                logger.debug(f"ソース正規化: {attr_name}={attr_value} → {absolute_url}")
 
-                        # Obfuscate and create proxy URL
-                        obfuscated_result = obfuscate_url(absolute_url)
-                        if obfuscated_result:
-                            if isinstance(obfuscated_result, dict):
-                                obfuscated = obfuscated_result.get('obfuscated_url')
-                            else:
-                                obfuscated = obfuscated_result
-
-                            proxy_url = create_proxy_url(obfuscated)
-                            tag['src'] = proxy_url
-
-                            # スクリプトの内容も処理
-                            if tag.name == 'script' and tag.string:
-                                content = tag.string
-                                
-                                # Discordでの非推奨unloadイベントリスナーの修正
-                                if 'addEventListener("unload"' in content or "addEventListener('unload'" in content:
-                                    content = content.replace('addEventListener("unload"', 'addEventListener("pagehide"')
-                                    content = content.replace("addEventListener('unload'", "addEventListener('pagehide'")
-                                    # その他のバリエーションもカバー
-                                    content = content.replace("window.addEventListener('unload'", "window.addEventListener('pagehide'")
-                                    content = content.replace('window.addEventListener("unload"', 'window.addEventListener("pagehide"')
-                                    content = content.replace('window.onunload', 'window.onpagehide')
-                                    # ログ出力
-                                    logger.info("非推奨のunloadイベントをpagehideに置換しました")
-                                
-                                # URL文字列を検出して置換
-                                urls = re.findall(r'["\']https?://[^"\']+["\']', content)
-                                for found_url in urls:
-                                    clean_url = found_url.strip('\'"')
-                                    obf_result = obfuscate_url(clean_url)
-                                    if isinstance(obf_result, dict):
-                                        obf_url = obf_result.get('obfuscated_url')
+                                # Obfuscate and create proxy URL
+                                obfuscated_result = obfuscate_url(absolute_url)
+                                if obfuscated_result:
+                                    if isinstance(obfuscated_result, dict):
+                                        obfuscated = obfuscated_result.get('obfuscated_url')
                                     else:
-                                        obf_url = obf_result
-                                    if obf_url:
-                                        content = content.replace(found_url, f'"/api/proxy/{obf_url}"')
-                                tag.string = content
+                                        obfuscated = obfuscated_result
+
+                                    proxy_url = create_proxy_url(obfuscated)
+                                    tag[attr_name] = proxy_url
+                            except Exception as e:
+                                logger.warning(f"Failed to process {attr_name} in {tag.name}: {str(e)}")
+                                logger.debug(traceback.format_exc())
+                    
+                    # srcset属性の特別処理（複数のURL候補を含む）
+                    if tag.has_attr('srcset'):
+                        try:
+                            srcset = tag['srcset']
+                            srcset_parts = srcset.split(',')
+                            new_srcset_parts = []
+                            
+                            for part in srcset_parts:
+                                part = part.strip()
+                                if not part:
+                                    continue
+                                    
+                                # URLと幅/密度指定を分離
+                                src_parts = part.split()
+                                if len(src_parts) >= 1:
+                                    src_url = src_parts[0]
+                                    
+                                    if not src_url.startswith('data:'):
+                                        # URLを正規化して難読化
+                                        final_url = resp.url
+                                        absolute_url = urllib.parse.urljoin(final_url, src_url)
+                                        obfuscated_result = obfuscate_url(absolute_url)
+                                        
+                                        if obfuscated_result:
+                                            if isinstance(obfuscated_result, dict):
+                                                obfuscated = obfuscated_result.get('obfuscated_url')
+                                            else:
+                                                obfuscated = obfuscated_result
+                                                
+                                            proxy_url = create_proxy_url(obfuscated)
+                                            
+                                            # 元のサイズ/密度指定を維持
+                                            if len(src_parts) > 1:
+                                                descriptor = ' '.join(src_parts[1:])
+                                                new_srcset_parts.append(f"{proxy_url} {descriptor}")
+                                            else:
+                                                new_srcset_parts.append(proxy_url)
+                            
+                            # 処理した結果を元の属性に戻す
+                            if new_srcset_parts:
+                                tag['srcset'] = ', '.join(new_srcset_parts)
+                        except Exception as e:
+                            logger.warning(f"Failed to process srcset in {tag.name}: {str(e)}")
+                            logger.debug(traceback.format_exc())
+                    
+                    # すべてのdata-*属性を処理
+                    for attr_name in list(tag.attrs.keys()):
+                        if attr_name.startswith('data-') and isinstance(tag[attr_name], str):
+                            attr_value = tag[attr_name]
+                            # URLのように見える値だけを処理
+                            if ('://' in attr_value or attr_value.startswith('/')) and not attr_value.startswith('data:'):
+                                try:
+                                    normalized_attr_url = urllib.parse.urljoin(resp.url, attr_value)
+                                    attr_obfuscated = obfuscate_url(normalized_attr_url)
+                                    if isinstance(attr_obfuscated, dict):
+                                        attr_obfuscated = attr_obfuscated.get('obfuscated_url')
+                                    if attr_obfuscated:
+                                        tag[attr_name] = create_proxy_url(attr_obfuscated)
+                                        logger.debug(f"データ属性を処理: {attr_name}={attr_value} → {tag[attr_name]}")
+                                except Exception as e:
+                                    logger.warning(f"Failed to process data attribute {attr_name}: {str(e)}")
+                    
+                    # スクリプトの内容も処理
+                    if tag.name == 'script' and tag.string:
+                        content = tag.string
+                        
+                        # Discordでの非推奨unloadイベントリスナーの修正
+                        if 'addEventListener("unload"' in content or "addEventListener('unload'" in content:
+                            content = content.replace('addEventListener("unload"', 'addEventListener("pagehide"')
+                            content = content.replace("addEventListener('unload'", "addEventListener('pagehide'")
+                            # その他のバリエーションもカバー
+                            content = content.replace("window.addEventListener('unload'", "window.addEventListener('pagehide'")
+                            content = content.replace('window.addEventListener("unload"', 'window.addEventListener("pagehide"')
+                            content = content.replace('window.onunload', 'window.onpagehide')
+                            # ログ出力
+                            logger.info("非推奨のunloadイベントをpagehideに置換しました")
+                        
+                        # URL文字列を検出して置換
+                        urls = re.findall(r'["\']https?://[^"\']+["\']', content)
+                        for found_url in urls:
+                            clean_url = found_url.strip('\'"')
+                            obf_result = obfuscate_url(clean_url)
+                            if isinstance(obf_result, dict):
+                                obf_url = obf_result.get('obfuscated_url')
+                            else:
+                                obf_url = obf_result
+                            if obf_url:
+                                content = content.replace(found_url, f'"/api/proxy/{obf_url}"')
+                        tag.string = content
 
                 # Process inline styles with URLs (background-image, etc.)
                 for tag in soup.find_all(style=True):
@@ -274,7 +344,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             # URLの完全な正規化
                             absolute_url = urllib.parse.urljoin(final_url, original_url)
                             # ログ出力（デバッグ用）
-                            print(f"スタイルURL正規化: {original_url} → {absolute_url}")
+                            logger.debug(f"スタイルURL正規化: {original_url} → {absolute_url}")
 
                             # Obfuscate and create proxy URL
                             obfuscated_result = obfuscate_url(absolute_url)
@@ -307,7 +377,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                 # URLの完全な正規化
                                 absolute_url = urllib.parse.urljoin(final_url, original_url)
                                 # ログ出力（デバッグ用）
-                                print(f"メタリフレッシュURL正規化: {original_url} → {absolute_url}")
+                                logger.debug(f"メタリフレッシュURL正規化: {original_url} → {absolute_url}")
 
                                 # Obfuscate and create proxy URL
                                 obfuscated_result = obfuscate_url(absolute_url)
