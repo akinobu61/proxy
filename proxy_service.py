@@ -405,30 +405,26 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
         # Add permissive headers for YouTube-like sites and DevTools
         response.headers['Content-Security-Policy'] = (
             "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; "
-            "script-src * 'unsafe-inline' 'unsafe-eval' data: blob: 'self' 'unsafe-hashes' 'wasm-unsafe-eval' "
-            "https://*.replit.dev https://*.replit.com https://*.google.com https://*.googleapis.com "
-            "https://*.gstatic.com https://accounts.google.com; "
+            "script-src * 'unsafe-inline' 'unsafe-eval' data: blob: 'unsafe-hashes' 'wasm-unsafe-eval' https: http:; "
             "style-src * 'unsafe-inline' data:; "
             "img-src * data: blob:; "
             "font-src * data:; "
-            "connect-src * blob:; "
+            "connect-src * blob: https: http:; "
             "frame-src *; "
-            "media-src * blob:; "
+            "media-src * blob: https: http:; "
             "worker-src * blob:; "
-            "require-trusted-types-for 'script'; "
-            "trusted-types 'allow-duplicates' default dompurify google html-sanitizer goog#html jsaction fast-html-policy TrustedTypesPolicy goog#gapi polymer-template-event-attribute-policy"
+            "trusted-types 'allow-duplicates' * default dompurify google html-sanitizer goog#html jsaction fast-html-policy TrustedTypesPolicy goog#gapi polymer-template polymer#html polymer#url polymer#dynamic polymer#imported"
         )
-        
+
         # Add security headers
         response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
         response.headers['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
         response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
-        
-        # Add Permissions-Policy header
-        response.headers['Permissions-Policy'] = 'trusted-types=*'
-        
-        # CORSとセキュリティヘッダーの更新
-        response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = '*'
+        response.headers['Access-Control-Allow-Headers'] = '*'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Expose-Headers'] = '*'
         response.headers['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
         response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
         response.headers['Service-Worker-Allowed'] = '/'
