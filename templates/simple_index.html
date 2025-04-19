@@ -1,154 +1,74 @@
 <!DOCTYPE html>
-<html lang="ja" data-bs-theme="dark">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URLプロキシ難読化サービス</title>
-    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
-        .main-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            display: none;
-        }
-        .copy-button {
-            cursor: pointer;
-        }
-        .form-container {
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .loading-spinner {
-            width: 3rem;
-            height: 3rem;
-        }
-        .expiry-badge {
-            font-size: 0.8rem;
-            margin-left: 5px;
-        }
+        .container { max-width: 800px; margin-top: 50px; }
+        .loading { display: none; text-align: center; margin: 20px 0; }
+        .loading-spinner { width: 3rem; height: 3rem; }
+        .result-box { display: none; margin: 20px 0; padding: 20px; border-radius: 5px; }
+        .bg-danger { background-color: #dc3545; }
     </style>
 </head>
 <body>
-    <div class="container main-container">
+    <div class="container">
         <h1 class="text-center mb-4">URLプロキシ難読化サービス</h1>
-        
+
         <div class="form-container">
-            <h3>URL難読化</h3>
-            <p>難読化したいURLを入力してください</p>
-            
             <div class="mb-3">
                 <label for="urlInput" class="form-label">URL:</label>
                 <input type="url" class="form-control" id="urlInput" placeholder="https://example.com">
             </div>
-            
-            <div class="mb-3">
-                <label for="expirySelect" class="form-label">有効期限:</label>
-                <select class="form-select" id="expirySelect">
-                    <option value="1" selected>1時間</option>
-                    <option value="2">2時間</option>
-                    <option value="6">6時間</option>
-                    <option value="12">12時間</option>
-                    <option value="24">24時間</option>
-                </select>
-            </div>
-            
+
             <button id="obfuscateBtn" class="btn btn-primary">URLを難読化</button>
         </div>
-        
+
         <div class="loading">
             <div class="spinner-border loading-spinner" role="status">
                 <span class="visually-hidden">処理中...</span>
             </div>
             <p>処理中...</p>
         </div>
-        
+
         <div id="resultBox" class="result-box">
-            <h4>難読化結果</h4>
-            
             <div class="mb-3">
-                <label class="form-label">元のURL:</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="originalUrl" readonly>
-                    <button class="btn btn-outline-secondary copy-button" data-target="originalUrl">
-                        <i class="bi bi-clipboard"></i> コピー
-                    </button>
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">難読化されたURL:</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="obfuscatedUrl" readonly>
-                    <button class="btn btn-outline-secondary copy-button" data-target="obfuscatedUrl">
-                        <i class="bi bi-clipboard"></i> コピー
-                    </button>
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">プロキシURL:</label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="proxyUrl" readonly>
                     <button class="btn btn-outline-secondary copy-button" data-target="proxyUrl">
                         <i class="bi bi-clipboard"></i> コピー
                     </button>
                 </div>
-                <small class="text-muted">このURLを使用してプロキシ経由でコンテンツにアクセスできます</small>
             </div>
-            
-            <div class="alert alert-info">
-                <small id="expiryInfo">有効期限: <span id="expiryTime"></span></small>
-                <span class="badge bg-warning text-dark expiry-badge">期限付き</span>
-            </div>
-            
-            <button id="testProxyBtn" class="btn btn-success">プロキシURLをテスト</button>
+            <button id="testProxyBtn" class="btn btn-success">新しいタブで開く</button>
         </div>
-        
+
         <div id="errorBox" class="result-box bg-danger text-white">
-            <h4>エラー</h4>
             <p id="errorMessage"></p>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const urlInput = document.getElementById('urlInput');
-            const expirySelect = document.getElementById('expirySelect');
             const obfuscateBtn = document.getElementById('obfuscateBtn');
             const resultBox = document.getElementById('resultBox');
             const errorBox = document.getElementById('errorBox');
-            const originalUrl = document.getElementById('originalUrl');
-            const obfuscatedUrl = document.getElementById('obfuscatedUrl');
             const proxyUrl = document.getElementById('proxyUrl');
-            const expiryTime = document.getElementById('expiryTime');
             const testProxyBtn = document.getElementById('testProxyBtn');
             const loading = document.querySelector('.loading');
-            
-            // コピーボタンの処理
+
             document.querySelectorAll('.copy-button').forEach(button => {
                 button.addEventListener('click', function() {
                     const targetId = this.getAttribute('data-target');
                     const targetElement = document.getElementById(targetId);
                     targetElement.select();
                     document.execCommand('copy');
-                    
-                    // コピー成功のフィードバック
+
                     const originalText = this.innerHTML;
                     this.innerHTML = '<i class="bi bi-check"></i> コピー完了';
                     setTimeout(() => {
@@ -156,83 +76,78 @@
                     }, 2000);
                 });
             });
-            
-            // プロキシURLテストボタン
+
             testProxyBtn.addEventListener('click', function() {
                 const url = proxyUrl.value;
                 if (url) {
                     window.open(url, '_blank');
                 }
             });
-            
-            // URL難読化ボタン
-            obfuscateBtn.addEventListener('click', function() {
+
+            function isValidUrl(url) {
+                try {
+                    new URL(url);
+                    return true;
+                } catch {
+                    return false;
+                }
+            }
+
+            async function obfuscateUrl() {
                 const url = urlInput.value.trim();
-                const expiryHours = expirySelect.value;
-                
+
                 if (!url) {
                     showError('URLを入力してください');
                     return;
                 }
-                
+
                 if (!isValidUrl(url)) {
                     showError('有効なURLを入力してください (例: https://example.com)');
                     return;
                 }
-                
-                // ローディング表示
+
                 loading.style.display = 'block';
                 resultBox.style.display = 'none';
                 errorBox.style.display = 'none';
-                
-                // API呼び出し
-                fetch('/api/obfuscate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        url: url,
-                        expiry_hours: parseInt(expiryHours)
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
+
+                try {
+                    const response = await fetch('/api/obfuscate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ url })
+                    });
+
+                    const data = await response.json();
+
                     loading.style.display = 'none';
-                    
-                    if (data.error) {
-                        showError(data.error);
-                        return;
+
+                    if (response.ok) {
+                        proxyUrl.value = data.proxy_url;
+                        resultBox.style.display = 'block';
+                        errorBox.style.display = 'none';
+                    } else {
+                        showError(data.error || 'URLの難読化に失敗しました');
                     }
-                    
-                    // 結果表示
-                    originalUrl.value = data.original_url;
-                    obfuscatedUrl.value = data.obfuscated_url;
-                    proxyUrl.value = data.proxy_url;
-                    expiryTime.textContent = data.expiry || '1時間後';
-                    
-                    resultBox.style.display = 'block';
-                })
-                .catch(error => {
+                } catch (error) {
                     loading.style.display = 'none';
-                    showError('エラーが発生しました: ' + error.message);
-                });
-            });
-            
+                    showError('リクエスト処理中にエラーが発生しました');
+                }
+            }
+
             function showError(message) {
                 errorMessage.textContent = message;
                 errorBox.style.display = 'block';
                 resultBox.style.display = 'none';
             }
-            
-            function isValidUrl(url) {
-                try {
-                    const parsedUrl = new URL(url);
-                    return ['http:', 'https:'].includes(parsedUrl.protocol);
-                } catch (e) {
-                    return false;
+
+            obfuscateBtn.addEventListener('click', obfuscateUrl);
+            urlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    obfuscateUrl();
                 }
-            }
+            });
         });
     </script>
 </body>
