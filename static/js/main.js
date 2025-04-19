@@ -66,20 +66,20 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Basic validation
         if (!url) {
-            showError('Please enter a URL');
+            showError('URLを入力してください');
             return;
         }
         
         // Validate URL format
         if (!isValidUrl(url)) {
-            showError('Please enter a valid URL with http:// or https:// protocol');
+            showError('http://またはhttps://プロトコルを含む有効なURLを入力してください');
             return;
         }
         
         try {
             // Show loading state
             obfuscateBtn.disabled = true;
-            obfuscateBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+            obfuscateBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 処理中...';
             
             // Make API request
             const response = await fetch('/api/obfuscate', {
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Reset button state
             obfuscateBtn.disabled = false;
-            obfuscateBtn.textContent = 'Obfuscate';
+            obfuscateBtn.textContent = '難読化';
             
             if (response.ok) {
                 // Show result
@@ -108,16 +108,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorArea.classList.add('d-none');
             } else {
                 // Show error
-                showError(data.error || 'Failed to obfuscate URL');
+                showError(data.error || 'URLの難読化に失敗しました');
             }
         } catch (error) {
             console.error('Error:', error);
             
             // Reset button state
             obfuscateBtn.disabled = false;
-            obfuscateBtn.textContent = 'Obfuscate';
+            obfuscateBtn.textContent = '難読化';
             
-            showError('An error occurred while processing your request');
+            showError('リクエスト処理中にエラーが発生しました');
         }
     }
     

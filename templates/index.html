@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="ja" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxy API - URL Obfuscation Service</title>
+    <title>プロキシAPI - URL難読化サービス</title>
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css">
     <link rel="stylesheet" href="/static/css/custom.css">
@@ -12,7 +12,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i data-feather="shield"></i> Proxy API
+                <i data-feather="shield"></i> プロキシAPI
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -20,10 +20,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
+                        <a class="nav-link active" href="/">ホーム</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/docs">API Docs</a>
+                        <a class="nav-link" href="/docs">APIドキュメント</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="https://github.com" target="_blank">GitHub</a>
@@ -37,28 +37,28 @@
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="text-center mb-5">
-                    <h1 class="display-4">URL Obfuscation Proxy API</h1>
-                    <p class="lead">Hide your original URLs while maintaining access to HTML, CSS, JavaScript, and more.</p>
+                    <h1 class="display-4">URL難読化プロキシAPI</h1>
+                    <p class="lead">元のURLを隠しながら、HTML、CSS、JavaScript等へのアクセスを維持します。</p>
                 </div>
 
                 <div class="card shadow-sm mb-5">
                     <div class="card-body">
-                        <h2 class="card-title">Generate Obfuscated URL</h2>
+                        <h2 class="card-title">難読化URLの生成</h2>
                         <div class="mb-3">
-                            <label for="urlInput" class="form-label">Enter a URL to obfuscate</label>
+                            <label for="urlInput" class="form-label">難読化するURLを入力してください</label>
                             <div class="input-group">
                                 <input type="url" class="form-control" id="urlInput" placeholder="https://example.com" required>
-                                <button class="btn btn-primary" id="obfuscateBtn" type="button">Obfuscate</button>
+                                <button class="btn btn-primary" id="obfuscateBtn" type="button">難読化</button>
                             </div>
-                            <div class="form-text">Enter a complete URL including the protocol (http:// or https://)</div>
+                            <div class="form-text">プロトコル（http://またはhttps://）を含む完全なURLを入力してください</div>
                         </div>
                         
                         <div id="resultArea" class="d-none">
                             <div class="alert alert-success">
-                                <h4 class="alert-heading">URL Obfuscated Successfully!</h4>
+                                <h4 class="alert-heading">URL難読化に成功しました！</h4>
                                 
                                 <div class="mb-2">
-                                    <label class="form-label mb-1"><strong>Original URL:</strong></label>
+                                    <label class="form-label mb-1"><strong>元のURL：</strong></label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="originalUrl" readonly>
                                         <button class="btn btn-outline-secondary copy-btn" data-target="originalUrl">
@@ -68,7 +68,7 @@
                                 </div>
                                 
                                 <div class="mb-2">
-                                    <label class="form-label mb-1"><strong>Obfuscated URL:</strong></label>
+                                    <label class="form-label mb-1"><strong>難読化URL：</strong></label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="obfuscatedUrl" readonly>
                                         <button class="btn btn-outline-secondary copy-btn" data-target="obfuscatedUrl">
@@ -78,7 +78,7 @@
                                 </div>
                                 
                                 <div class="mb-2">
-                                    <label class="form-label mb-1"><strong>Proxy URL (Use this to access the resource):</strong></label>
+                                    <label class="form-label mb-1"><strong>プロキシURL（リソースにアクセスするにはこちらを使用）：</strong></label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="proxyUrl" readonly>
                                         <button class="btn btn-outline-secondary copy-btn" data-target="proxyUrl">
@@ -87,13 +87,13 @@
                                     </div>
                                 </div>
                                 
-                                <a href="#" id="testLink" target="_blank" class="btn btn-success mt-3">Test the Proxy URL</a>
+                                <a href="#" id="testLink" target="_blank" class="btn btn-success mt-3">プロキシURLをテスト</a>
                             </div>
                         </div>
                         
                         <div id="errorArea" class="d-none">
                             <div class="alert alert-danger">
-                                <h4 class="alert-heading">Error</h4>
+                                <h4 class="alert-heading">エラー</h4>
                                 <p id="errorMessage"></p>
                             </div>
                         </div>
@@ -105,8 +105,8 @@
                         <div class="card h-100 shadow-sm">
                             <div class="card-body text-center">
                                 <i data-feather="lock" class="feature-icon mb-3"></i>
-                                <h5 class="card-title">URL Obfuscation</h5>
-                                <p class="card-text">Hide your original URLs from prying eyes while maintaining full access to the content.</p>
+                                <h5 class="card-title">URL難読化</h5>
+                                <p class="card-text">元のURLを覗き見から隠しながら、コンテンツへの完全なアクセスを維持します。</p>
                             </div>
                         </div>
                     </div>
@@ -114,8 +114,8 @@
                         <div class="card h-100 shadow-sm">
                             <div class="card-body text-center">
                                 <i data-feather="file-text" class="feature-icon mb-3"></i>
-                                <h5 class="card-title">Multiple Content Types</h5>
-                                <p class="card-text">Support for HTML, CSS, JavaScript, JSON, and other common web content types.</p>
+                                <h5 class="card-title">複数のコンテンツタイプ</h5>
+                                <p class="card-text">HTML、CSS、JavaScript、JSONなど一般的なウェブコンテンツタイプをサポートしています。</p>
                             </div>
                         </div>
                     </div>
@@ -123,8 +123,8 @@
                         <div class="card h-100 shadow-sm">
                             <div class="card-body text-center">
                                 <i data-feather="shield" class="feature-icon mb-3"></i>
-                                <h5 class="card-title">Secure & Fast</h5>
-                                <p class="card-text">Encrypted URL handling with rate limiting protection and fast request routing.</p>
+                                <h5 class="card-title">安全＆高速</h5>
+                                <p class="card-text">暗号化されたURL処理、レート制限による保護、高速なリクエストルーティングを提供します。</p>
                             </div>
                         </div>
                     </div>
@@ -132,43 +132,43 @@
                 
                 <div class="card shadow-sm mb-5 mt-4">
                     <div class="card-header">
-                        <h3>Advanced Features</h3>
+                        <h3>高度な機能</h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <h4><i data-feather="search" class="me-2"></i> Search Engine Proxy</h4>
-                                <p>Use our search API endpoint to route search queries through our proxy:</p>
+                                <h4><i data-feather="search" class="me-2"></i> 検索エンジンプロキシ</h4>
+                                <p>検索APIエンドポイントを使用して検索クエリをプロキシ経由でルーティングできます：</p>
                                 <div class="bg-dark p-3 rounded">
-                                    <code>/api/search?q=your+search+query</code>
+                                    <code>/api/search?q=検索クエリ</code>
                                 </div>
-                                <p class="mt-2">All search results will be automatically proxied through our service.</p>
+                                <p class="mt-2">すべての検索結果は自動的に当サービスを通じてプロキシされます。</p>
                             </div>
                             <div class="col-md-6 mb-4">
-                                <h4><i data-feather="link" class="me-2"></i> Direct URL Access</h4>
-                                <p>Quickly proxy any URL by using our direct URL API:</p>
+                                <h4><i data-feather="link" class="me-2"></i> 直接URLアクセス</h4>
+                                <p>ダイレクトURLを使用して任意のウェブサイトを迅速にプロキシできます：</p>
                                 <div class="bg-dark p-3 rounded">
                                     <code>/api/direct_url?url=https://example.com</code>
                                 </div>
-                                <p class="mt-2">Perfect for quickly creating a proxied version of any website.</p>
+                                <p class="mt-2">あらゆるウェブサイトのプロキシ版を素早く作成するのに最適です。</p>
                             </div>
                         </div>
                         
                         <div class="row mt-4">
                             <div class="col-md-12">
-                                <h4><i data-feather="clock" class="me-2"></i> Request Wait Time Control</h4>
-                                <p>All endpoints support customizable wait times before processing requests:</p>
+                                <h4><i data-feather="clock" class="me-2"></i> リクエスト待機時間の制御</h4>
+                                <p>すべてのエンドポイントはリクエスト処理前の待機時間をカスタマイズできます：</p>
                                 <div class="bg-dark p-3 rounded">
                                     <code>/api/proxy/encoded_string.checksum?wait=5</code><br>
-                                    <code>/api/search?q=your+search+query&wait=2</code><br>
+                                    <code>/api/search?q=検索クエリ&wait=2</code><br>
                                     <code>/api/direct_url?url=https://example.com&wait=0</code>
                                 </div>
-                                <p class="mt-2">Default wait time is 1 second. Specify <code>wait=0</code> for immediate processing.</p>
+                                <p class="mt-2">デフォルトの待機時間は1秒です。<code>wait=0</code>を指定すると即時処理されます。</p>
                             </div>
                         </div>
                         
                         <div class="text-center mt-4">
-                            <a href="/docs" class="btn btn-primary">View Full API Documentation</a>
+                            <a href="/docs" class="btn btn-primary">APIドキュメントの全文を表示</a>
                         </div>
                     </div>
                 </div>
@@ -180,11 +180,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5>Proxy API</h5>
-                    <p>A secure URL obfuscation service</p>
+                    <h5>プロキシAPI</h5>
+                    <p>安全なURL難読化サービス</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p>© 2023 Proxy API Service</p>
+                    <p>© 2023 プロキシAPIサービス</p>
                 </div>
             </div>
         </div>
