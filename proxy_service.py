@@ -141,26 +141,40 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                 for link in soup.find_all(['a', 'link']):
                     href = link.get('href')
                     if href:
-                        # Skip fragment-only links (e.g., #section)
-                        if href.startswith('#'):
+                        # Skip fragment-only links, javascript, mailto and tel links
+                        if href.startswith('#') or any(href.startswith(scheme) for scheme in ['javascript:', 'mailto:', 'tel:']):
                             continue
                             
-                        # Handle relative URLs
-                        if href.startswith('/'):
-                            absolute_url = f"{base_url}{href}"
-                        # Handle absolute URLs
-                        elif href.startswith(('http://', 'https://')):
-                            absolute_url = href
-                        # Handle protocol-relative URLs (//example.com)
-                        elif href.startswith('//'):
-                            absolute_url = f"{parsed_url.scheme}:{href}"
-                        else:
-                            # Skip mailto:, tel:, javascript: links
-                            if any(href.startswith(scheme) for scheme in ['mailto:', 'tel:', 'javascript:']):
-                                continue
-                            # Other relative paths (not starting with /)
-                            path_base = '/'.join(parsed_url.path.split('/')[:-1]) if '/' in parsed_url.path else ''
-                            absolute_url = f"{base_url}{path_base}/{href}"
+                        try:
+                            # Handle relative URLs
+                            if href.startswith('/'):
+                                absolute_url = f"{base_url}{href}"
+                            # Handle absolute URLs
+                            elif href.startswith(('http://', 'https://')):
+                                absolute_url = href
+                            # Handle protocol-relative URLs (//example.com)
+                            elif href.startswith('//'):
+                                absolute_url = f"{parsed_url.scheme}:{href}"
+                            else:
+                                # Other relative paths (not starting with /)
+                                path_base = '/'.join(parsed_url.path.split('/')[:-1]) if '/' in parsed_url.path else ''
+                                absolute_url = f"{base_url}{path_base}/{href}"
+
+                            # 正規化されたURLを生成
+                            absolute_url = urllib.parse.urljoin(base_url, absolute_url)
+                            
+                            # URLを難読化して新しいプロキシURLを作成
+                            obfuscated_result = obfuscate_url(absolute_url)
+                            if isinstance(obfuscated_result, dict):
+                                obfuscated = obfuscated_result.get('obfuscated_url')
+                            else:
+                                obfuscated = obfuscated_result
+                                
+                            if obfuscated:
+                                link['href'] = f"/api/proxy/{obfuscated}"
+                        except Exception as e:
+                            logger.warning(f"Failed to process link {href}: {str(e)}")
+                            continue
                         
                         # Obfuscate and create proxy URL
                         obfuscated_result = obfuscate_url(absolute_url)
