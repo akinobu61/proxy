@@ -280,6 +280,18 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             # スクリプトの内容も処理
                             if tag.name == 'script' and tag.string:
                                 content = tag.string
+                                
+                                # Discordでの非推奨unloadイベントリスナーの修正
+                                if 'addEventListener("unload"' in content or "addEventListener('unload'" in content:
+                                    content = content.replace('addEventListener("unload"', 'addEventListener("pagehide"')
+                                    content = content.replace("addEventListener('unload'", "addEventListener('pagehide'")
+                                    # その他のバリエーションもカバー
+                                    content = content.replace("window.addEventListener('unload'", "window.addEventListener('pagehide'")
+                                    content = content.replace('window.addEventListener("unload"', 'window.addEventListener("pagehide"')
+                                    content = content.replace('window.onunload', 'window.onpagehide')
+                                    # ログ出力
+                                    logger.info("非推奨のunloadイベントをpagehideに置換しました")
+                                
                                 # URL文字列を検出して置換
                                 urls = re.findall(r'["\']https?://[^"\']+["\']', content)
                                 for found_url in urls:
@@ -737,8 +749,15 @@ def discord_direct_assets(asset_path):
     Discordの直接アセットにアクセスするためのエンドポイント
     """
     try:
+        # 特別なパス処理
+        if asset_path.startswith('assets/'):
+            # assets/assets/file.js のような二重パス構造に対応
+            asset_path = asset_path.replace('assets/', '', 1)
+            logger.info(f"固有のパスを修正しました: {asset_path}")
+        
         # Discord CDNパスを構築
         discord_cdn_url = f"https://discord.com/assets/{asset_path}"
+        logger.info(f"Discord CDN URL: {discord_cdn_url}")
         
         # Content-Typeを判断（拡張子ベース）
         content_type = 'application/octet-stream'  # デフォルト
@@ -756,22 +775,40 @@ def discord_direct_assets(asset_path):
             content_type = 'image/webp'
         elif asset_path.endswith('.wasm'):
             content_type = 'application/wasm'
+        elif asset_path.endswith('.ico'):
+            content_type = 'image/x-icon'
         
         # ヘッダーセットアップ
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36',
             'Accept': '*/*',
             'Accept-Language': 'en-US,en;q=0.9',
             'Origin': 'https://discord.com',
             'Referer': 'https://discord.com/',
+            'Sec-Fetch-Dest': 'script',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+            'Cache-Control': 'no-cache'
         }
         
         # 直接リクエスト実行（少しスピードアップするためにwait時間を0に）
-        wait_time = 0 if (asset_path.endswith('.js') or asset_path.endswith('.wasm')) else DEFAULT_WAIT_TIME
+        # 特にJavaScriptファイルは即時処理
+        wait_time = 0 
         if wait_time > 0:
             time.sleep(wait_time)
             
-        resp = requests.get(discord_cdn_url, headers=headers, stream=True, timeout=40)
+        resp = requests.get(discord_cdn_url, headers=headers, stream=True, timeout=60)
+        
+        # エラーチェック
+        if resp.status_code != 200:
+            logger.error(f"Discord CDN error: {resp.status_code} for {discord_cdn_url}")
+            # 代替パスを試す - Discord CDNの仕様変更に対応
+            alternate_url = f"https://discord.com/{asset_path}"
+            logger.info(f"代替パスを試みます: {alternate_url}")
+            resp = requests.get(alternate_url, headers=headers, stream=True, timeout=60)
+            
+            if resp.status_code != 200:
+                return jsonify({"error": f"Asset not found: {discord_cdn_url}", "status": 404}), 404
         
         # WebAssemblyまたはJavaScriptファイルの場合は特別処理
         if asset_path.endswith('.wasm'):

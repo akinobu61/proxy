@@ -39,7 +39,18 @@ def discord_asset_redirect(path):
     """
     # 特定の拡張子を持つDiscordアセットへのリクエストをAPIルートにリダイレクト
     special_extensions = ['.js', '.wasm', '.woff2', '.svg', '.png', '.webp', '.css', '.ico']
-    if any(path.endswith(ext) for ext in special_extensions):
+    
+    # 拡張子チェック
+    has_special_ext = any(path.endswith(ext) for ext in special_extensions)
+    
+    # assets/assetsの二重パス構造への対応（これはDiscord特有の構造）
+    if path.startswith('assets/') and has_special_ext:
+        # assets/assets/filename.js のような二重パスを処理
+        # 直接Discord CDNへのパスを構築するためにassets部分を完全に削除
+        actual_path = path.replace('assets/', '', 1)
+        return redirect(f"/api/assets/{actual_path}")
+    elif has_special_ext:
+        # 通常のファイル
         return redirect(f"/api/assets/{path}")
     
     # デフォルトのルート（上記に当てはまらない場合はインデックスページに戻る）
