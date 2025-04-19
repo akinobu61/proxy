@@ -749,15 +749,22 @@ def discord_direct_assets(asset_path):
     Discordの直接アセットにアクセスするためのエンドポイント
     """
     try:
-        # 特別なパス処理
-        if asset_path.startswith('assets/'):
-            # assets/assets/file.js のような二重パス構造に対応
-            asset_path = asset_path.replace('assets/', '', 1)
-            logger.info(f"固有のパスを修正しました: {asset_path}")
+        # もしapi/assets/部分が残っていれば削除
+        if asset_path.startswith('api/assets/'):
+            asset_path = asset_path.replace('api/assets/', '', 1)
         
-        # Discord CDNパスを構築
-        discord_cdn_url = f"https://discord.com/assets/{asset_path}"
-        logger.info(f"Discord CDN URL: {discord_cdn_url}")
+        # assets/部分が残っていれば削除
+        if asset_path.startswith('assets/'):
+            asset_path = asset_path.replace('assets/', '', 1)
+            print(f"固有のパスを修正しました: {asset_path}")
+            
+        # Discordの複数の可能性のあるCDNエンドポイント
+        possible_urls = [
+            f"https://discord.com/assets/{asset_path}",
+            f"https://cdn.discordapp.com/assets/{asset_path}",
+            f"https://discordapp.com/assets/{asset_path}",
+            f"https://discord.com/{asset_path}"
+        ]
         
         # Content-Typeを判断（拡張子ベース）
         content_type = 'application/octet-stream'  # デフォルト
@@ -777,6 +784,8 @@ def discord_direct_assets(asset_path):
             content_type = 'application/wasm'
         elif asset_path.endswith('.ico'):
             content_type = 'image/x-icon'
+        elif asset_path.endswith('.map'):
+            content_type = 'application/json'
         
         # ヘッダーセットアップ
         headers = {
@@ -791,25 +800,54 @@ def discord_direct_assets(asset_path):
             'Cache-Control': 'no-cache'
         }
         
-        # 直接リクエスト実行（少しスピードアップするためにwait時間を0に）
-        # 特にJavaScriptファイルは即時処理
-        wait_time = 0 
-        if wait_time > 0:
-            time.sleep(wait_time)
-            
-        resp = requests.get(discord_cdn_url, headers=headers, stream=True, timeout=60)
+        # すべてのURLを試す
+        resp = None
+        success_url = None
         
-        # エラーチェック
-        if resp.status_code != 200:
-            logger.error(f"Discord CDN error: {resp.status_code} for {discord_cdn_url}")
-            # 代替パスを試す - Discord CDNの仕様変更に対応
-            alternate_url = f"https://discord.com/{asset_path}"
-            logger.info(f"代替パスを試みます: {alternate_url}")
-            resp = requests.get(alternate_url, headers=headers, stream=True, timeout=60)
-            
-            if resp.status_code != 200:
-                return jsonify({"error": f"Asset not found: {discord_cdn_url}", "status": 404}), 404
+        for url in possible_urls:
+            try:
+                print(f"Discord CDNを試しています: {url}")
+                resp = requests.get(url, headers=headers, stream=True, timeout=15)
+                if resp.status_code == 200:
+                    print(f"成功: {url}")
+                    success_url = url
+                    break
+            except Exception as url_error:
+                print(f"URL {url} でエラー: {str(url_error)}")
+                continue
         
+        # どのURLも成功しなかった場合
+        if resp is None or resp.status_code != 200:
+            # JavaScriptファイルの場合は空のJSを返す
+            if asset_path.endswith('.js'):
+                print(f"JS ファイルが見つからないため空のJSを返します: {asset_path}")
+                empty_js = "//Empty JS file\nconsole.log('Asset not found but empty file provided');"
+                response = Response(empty_js, mimetype='application/javascript')
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                response.headers['Content-Type'] = 'application/javascript'
+                return response
+            
+            # CSSファイルの場合は空のCSSを返す
+            if asset_path.endswith('.css'):
+                print(f"CSS ファイルが見つからないため空のCSSを返します: {asset_path}")
+                empty_css = "/* Empty CSS file */\n"
+                response = Response(empty_css, mimetype='text/css')
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                response.headers['Content-Type'] = 'text/css'
+                return response
+                
+            # マップファイルの場合は空のJSONを返す
+            if asset_path.endswith('.map'):
+                print(f"Map ファイルが見つからないため空のJSONを返します: {asset_path}")
+                empty_map = "{}"
+                response = Response(empty_map, mimetype='application/json')
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                response.headers['Content-Type'] = 'application/json'
+                return response
+                
+            # エラーの場合は404を返す
+            return jsonify({"error": f"Asset not found: {asset_path}", "status": 404}), 404
+            
         # WebAssemblyまたはJavaScriptファイルの場合は特別処理
         if asset_path.endswith('.wasm'):
             response = Response(
@@ -821,7 +859,7 @@ def discord_direct_assets(asset_path):
             response.headers['Content-Type'] = 'application/wasm'
         else:
             response = Response(
-                resp.iter_content(chunk_size=16384),
+                resp.iter_content(chunk_size=32768),
                 status=resp.status_code,
                 mimetype=content_type,
                 direct_passthrough=True
@@ -831,11 +869,40 @@ def discord_direct_assets(asset_path):
         # CORSヘッダー
         response.headers['Access-Control-Allow-Origin'] = '*'
         response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+        response.headers['Cache-Control'] = 'public, max-age=86400'
         
+        # その他のヘッダーを転送（必要なものだけ）
+        for key, value in resp.headers.items():
+            if key.lower() in ['etag', 'last-modified', 'content-disposition']:
+                response.headers[key] = value
+                
         return response
         
     except Exception as e:
-        logger.error(f"Error in discord_direct_assets: {str(e)}")
+        print(f"Error in discord_direct_assets: {str(e)}")
+        
+        # エラー時には、重要なアセットタイプには空のコンテンツを返す
+        if asset_path.endswith('.js'):
+            empty_js = "//Empty JS file\nconsole.log('Asset error but empty file provided');"
+            response = Response(empty_js, mimetype='application/javascript')
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Content-Type'] = 'application/javascript'
+            return response
+            
+        if asset_path.endswith('.css'):
+            empty_css = "/* Empty CSS file */\n"
+            response = Response(empty_css, mimetype='text/css')
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Content-Type'] = 'text/css'
+            return response
+            
+        if asset_path.endswith('.map'):
+            empty_map = "{}"
+            response = Response(empty_map, mimetype='application/json')
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Content-Type'] = 'application/json'
+            return response
+            
         return jsonify({"error": f"Asset error: {str(e)}", "status": 500}), 500
 
 # API WebSocketサポート

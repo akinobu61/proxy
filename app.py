@@ -45,40 +45,48 @@ def discord_asset_redirect(path):
     
     print(f"Discord asset redirect request for path: {path}")
 
-    # WebSocket接続のリダイレクト
-    if 'gateway.discord.gg' in path or 'remote-auth-gateway.discord.gg' in path:
-        print(f"Redirecting WebSocket request directly to wss://{path}")
-        # WebSocketはHTTP RedirectではなくJavaScriptで処理する必要があるため
-        # 説明ページを返す
-        response = """
-        <html>
-        <head><title>WebSocket Connection</title></head>
-        <body>
-            <h1>WebSocket Connection Initiated</h1>
-            <p>WebSocket connection to {0} would be established.</p>
-            <script>
-                // WebSocketへの直接接続を試みる
-                try {{
-                    const ws = new WebSocket('wss://{0}');
-                    ws.onopen = () => console.log('WebSocket connection established');
-                    ws.onmessage = (event) => console.log('Message received:', event.data);
-                    ws.onerror = (error) => console.error('WebSocket error:', error);
-                    ws.onclose = () => console.log('WebSocket connection closed');
-                }} catch(e) {{
-                    console.error('Failed to connect to WebSocket:', e);
-                }}
-            </script>
-        </body>
-        </html>
-        """.format(path)
-        return Response(response, mimetype='text/html')
+    # Discord API直接リクエスト
+    if path.startswith('api/v') or 'gateway.discord.gg' in path or 'remote-auth-gateway.discord.gg' in path:
+        print(f"Redirecting Discord API request directly to: {path}")
+        # 特別なパス処理
+        if 'gateway.discord.gg' in path:
+            return redirect(f"https://{path}")
+        elif 'remote-auth-gateway.discord.gg' in path:
+            return redirect(f"https://{path}")
+        else:
+            return redirect(f"https://discord.com/{path}")
+        
+        # ディスコードAPI直接リダイレクト
     
     # api/assets/ への直接リクエストを処理（通常のリダイレクトでは対応できなかった場合の対処）
     if path.startswith('api/assets/'):
         asset_filename = path.replace('api/assets/', '', 1)
-        # Discord CDNへ直接リダイレクト
-        print(f"Direct assets redirect: {asset_filename}")
-        return redirect(f"https://discord.com/assets/{asset_filename}")
+        # 空のJavaScriptやCSS、マップファイルを返す
+        if asset_filename.endswith('.js'):
+            print(f"空のJSファイルを返します: {asset_filename}")
+            empty_js = "// Empty JS file\nconsole.log('Empty JS file provided');"
+            response = Response(empty_js, mimetype='application/javascript')
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Content-Type'] = 'application/javascript'
+            return response
+        elif asset_filename.endswith('.css'):
+            print(f"空のCSSファイルを返します: {asset_filename}")
+            empty_css = "/* Empty CSS file */\n"
+            response = Response(empty_css, mimetype='text/css')
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Content-Type'] = 'text/css'
+            return response
+        elif asset_filename.endswith('.map'):
+            print(f"空のマップファイルを返します: {asset_filename}")
+            empty_map = "{}"
+            response = Response(empty_map, mimetype='application/json')
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Content-Type'] = 'application/json'
+            return response
+        else:
+            # Discord CDNへ直接リダイレクト
+            print(f"Direct assets redirect: {asset_filename}")
+            return redirect(f"https://discord.com/assets/{asset_filename}")
     # 他のapi/で始まるパスは処理しない（再帰リダイレクト防止）
     elif path.startswith('api/'):
         return render_template('simple_index.html')
