@@ -1,8 +1,10 @@
 import time
 import logging
+import urllib.parse
 from functools import wraps
 from flask import Blueprint, request, Response, jsonify, current_app
 import requests
+from bs4 import BeautifulSoup
 from utils import obfuscate_url, deobfuscate_url, is_valid_url
 
 logger = logging.getLogger(__name__)
@@ -46,7 +48,7 @@ def rate_limit(f):
     
     return decorated_function
 
-def proxy_request(url, method=None, headers=None, data=None):
+def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
     """
     Forward a request to the target URL and return the response
     """
@@ -60,6 +62,14 @@ def proxy_request(url, method=None, headers=None, data=None):
     if headers is None:
         headers = {key: value for key, value in request.headers.items()
                   if key.lower() not in ['host', 'content-length']}
+        
+        # Adjust referer and origin headers to prevent cross-origin issues
+        if 'referer' in headers:
+            # Remove original referer to avoid leaking information
+            del headers['referer']
+            
+        # Add accept-encoding header to ensure we get the right content
+        headers['accept-encoding'] = 'identity'
     
     # Prepare request body
     if data is None:
@@ -80,17 +90,80 @@ def proxy_request(url, method=None, headers=None, data=None):
             allow_redirects=False  # We'll handle redirects manually
         )
         
-        # Create a Flask response
-        response = Response(
-            response=resp.iter_content(chunk_size=1024),
-            status=resp.status_code
-        )
+        # Process the response based on content type
+        content_type = resp.headers.get('content-type', '')
+        
+        # Handle HTML content - we need to rewrite links
+        if 'text/html' in content_type:
+            try:
+                content = resp.content.decode('utf-8', errors='replace')
+                
+                # Get base URL for resolving relative URLs
+                parsed_url = urllib.parse.urlparse(url)
+                base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+                
+                # Replace relative URLs with absolute ones for proxy
+                # This is a simple implementation and might need enhancement for complex pages
+                soup = BeautifulSoup(content, 'html.parser')
+                
+                # Process all links
+                for link in soup.find_all(['a', 'link']):
+                    href = link.get('href')
+                    if href:
+                        if href.startswith('/'):
+                            # Convert relative URL to absolute
+                            absolute_url = f"{base_url}{href}"
+                            # Obfuscate and create proxy URL
+                            obfuscated = obfuscate_url(absolute_url)
+                            if obfuscated:
+                                proxy_url = f"/api/proxy/{obfuscated}"
+                                link['href'] = proxy_url
+                
+                # Process all scripts, images, and other resources
+                for tag in soup.find_all(['script', 'img', 'iframe', 'source']):
+                    src = tag.get('src')
+                    if src:
+                        if src.startswith('/'):
+                            # Convert relative URL to absolute
+                            absolute_url = f"{base_url}{src}"
+                            # Obfuscate and create proxy URL
+                            obfuscated = obfuscate_url(absolute_url)
+                            if obfuscated:
+                                proxy_url = f"/api/proxy/{obfuscated}"
+                                tag['src'] = proxy_url
+                
+                # Convert back to string
+                content = str(soup)
+                
+                # Create response with modified content
+                response = Response(content, status=resp.status_code)
+            except Exception as e:
+                logger.error(f"Error processing HTML: {str(e)}")
+                # Fall back to unmodified content
+                response = Response(
+                    response=resp.iter_content(chunk_size=1024),
+                    status=resp.status_code
+                )
+        else:
+            # For non-HTML content, stream the response as-is
+            response = Response(
+                response=resp.iter_content(chunk_size=1024),
+                status=resp.status_code
+            )
         
         # Copy headers from the proxied response
         excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
         for name, value in resp.headers.items():
             if name.lower() not in excluded_headers:
                 response.headers[name] = value
+                
+        # Ensure proper content type with charset
+        if 'content-type' in resp.headers:
+            content_type = resp.headers['content-type']
+            if 'text/html' in content_type and 'charset' not in content_type:
+                response.headers['Content-Type'] = f"{content_type}; charset=utf-8"
+            else:
+                response.headers['Content-Type'] = content_type
         
         return response
     
