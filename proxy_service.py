@@ -111,38 +111,12 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
             params=request.args,
             stream=True,
             timeout=request_timeout,
-            allow_redirects=False  # We'll handle redirects manually
+            allow_redirects=True  # リダイレクト先のコンテンツまで処理するように変更（togetter等の対応）
         )
 
-        # Handle redirects manually
-        if resp.status_code in (301, 302, 303, 307, 308):
-            redirect_url = resp.headers.get('location')
-            if redirect_url:
-                logger.info(f"Handling redirect to {redirect_url}")
-
-                # Convert relative redirect URLs to absolute
-                if redirect_url.startswith('/'):
-                    parsed_url = urllib.parse.urlparse(url)
-                    base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
-                    redirect_url = f"{base_url}{redirect_url}"
-                elif not redirect_url.startswith(('http://', 'https://')):
-                    parsed_url = urllib.parse.urlparse(url)
-                    base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
-                    path_base = '/'.join(parsed_url.path.split('/')[:-1]) if '/' in parsed_url.path else ''
-                    redirect_url = f"{base_url}{path_base}/{redirect_url}"
-
-                # Obfuscate the redirect URL
-                obfuscated_result = obfuscate_url(redirect_url)
-                if obfuscated_result:
-                    if isinstance(obfuscated_result, dict):
-                        obfuscated = obfuscated_result.get('obfuscated_url')
-                    else:
-                        obfuscated = obfuscated_result
-
-                    proxy_redirect_url = create_proxy_url(obfuscated)
-                    response = Response("", status=resp.status_code)
-                    response.headers['Location'] = proxy_redirect_url
-                    return response
+        # リダイレクトの処理はrequests.requestのallow_redirects=Trueに任せるため、
+        # この手動リダイレクト処理コードは削除します
+        # リダイレクト先の内容はresp.contentに含まれているので、以降の処理で通常通り処理されます
 
         # Process the response based on content type
         content_type = resp.headers.get('content-type', '')
@@ -169,23 +143,17 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             continue
 
                         try:
-                            # 現在のURLからベースURLとパスを取得
-                            current_url_parsed = urllib.parse.urlparse(url)
-                            current_base = f"{current_url_parsed.scheme}://{current_url_parsed.netloc}"
-                            current_path = '/'.join(current_url_parsed.path.split('/')[:-1]) if '/' in current_url_parsed.path else ''
-
-                            # hrefを正規化
-                            if href.startswith('//'):
-                                absolute_url = f"{current_url_parsed.scheme}:{href}"
-                            elif href.startswith('/'):
-                                absolute_url = f"{current_base}{href}"
-                            elif href.startswith(('http://', 'https://')):
-                                absolute_url = href
-                            else:
-                                absolute_url = f"{current_base}{current_path}/{href}"
-
-                            # 最終的なURLを正規化
-                            normalized_url = urllib.parse.urljoin(url, absolute_url)
+                            # 最終的なURLを正規化（基準URLからの相対パスを絶対URLに変換）
+                            # 重要: リダイレクト後のURLを基準にする必要があるため、
+                            # resp.urlを使用（リダイレクト後の最終URL）
+                            final_url = resp.url
+                            final_base_url = f"{urllib.parse.urlparse(final_url).scheme}://{urllib.parse.urlparse(final_url).netloc}"
+                            
+                            # URLの完全な正規化
+                            normalized_url = urllib.parse.urljoin(final_url, href)
+                            
+                            # ログ出力（デバッグ用）
+                            print(f"リンク正規化: {href} → {normalized_url}")
 
                             # URLを難読化
                             obfuscated_result = obfuscate_url(normalized_url)
@@ -217,7 +185,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                 # data-href属性の処理
                                 if link.has_attr('data-href'):
                                     data_href = link['data-href']
-                                    normalized_data_url = urllib.parse.urljoin(url, data_href)
+                                    normalized_data_url = urllib.parse.urljoin(final_url, data_href)
                                     data_obfuscated = obfuscate_url(normalized_data_url)
                                     if isinstance(data_obfuscated, dict):
                                         data_obfuscated = data_obfuscated.get('obfuscated_url')
@@ -227,7 +195,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                 # data-url属性の処理
                                 if link.has_attr('data-url'):
                                     data_url = link['data-url']
-                                    normalized_data_url = urllib.parse.urljoin(url, data_url)
+                                    normalized_data_url = urllib.parse.urljoin(final_url, data_url)
                                     data_obfuscated = obfuscate_url(normalized_data_url)
                                     if isinstance(data_obfuscated, dict):
                                         data_obfuscated = data_obfuscated.get('obfuscated_url')
@@ -237,34 +205,16 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             logger.warning(f"Failed to process link {href}: {str(e)}")
                             continue
 
-                        # Obfuscate and create proxy URL
-                        obfuscated_result = obfuscate_url(absolute_url)
-                        if obfuscated_result:
-                            if isinstance(obfuscated_result, dict):
-                                obfuscated = obfuscated_result.get('obfuscated_url')
-                            else:
-                                obfuscated = obfuscated_result
-
-                            proxy_url = create_proxy_url(obfuscated)
-                            link['href'] = proxy_url
-
                 # Process all scripts, images, and other resources
                 for tag in soup.find_all(['script', 'img', 'iframe', 'source']):
                     src = tag.get('src')
                     if src and not src.startswith('data:'):  # Skip data: URLs
-                        # Handle relative URLs
-                        if src.startswith('/'):
-                            absolute_url = f"{base_url}{src}"
-                        # Handle absolute URLs
-                        elif src.startswith(('http://', 'https://')):
-                            absolute_url = src
-                        # Handle protocol-relative URLs (//example.com)
-                        elif src.startswith('//'):
-                            absolute_url = f"{parsed_url.scheme}:{src}"
-                        else:
-                            # Other relative paths (not starting with /)
-                            path_base = '/'.join(parsed_url.path.split('/')[:-1]) if '/' in parsed_url.path else ''
-                            absolute_url = f"{base_url}{path_base}/{src}"
+                        # リダイレクト後のURLを使用して相対パスを解決
+                        final_url = resp.url
+                        # URLの完全な正規化
+                        absolute_url = urllib.parse.urljoin(final_url, src)
+                        # ログ出力（デバッグ用）
+                        print(f"ソース正規化: {src} → {absolute_url}")
 
                         # Obfuscate and create proxy URL
                         obfuscated_result = obfuscate_url(absolute_url)
@@ -319,16 +269,12 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             if original_url.startswith('data:'):
                                 continue
 
-                            # Handle different URL types
-                            if original_url.startswith('/'):
-                                absolute_url = f"{base_url}{original_url}"
-                            elif original_url.startswith(('http://', 'https://')):
-                                absolute_url = original_url
-                            elif original_url.startswith('//'):
-                                absolute_url = f"{parsed_url.scheme}:{original_url}"
-                            else:
-                                path_base = '/'.join(parsed_url.path.split('/')[:-1]) if '/' in parsed_url.path else ''
-                                absolute_url = f"{base_url}{path_base}/{original_url}"
+                            # リダイレクト後のURLを使用して相対パスを解決
+                            final_url = resp.url
+                            # URLの完全な正規化
+                            absolute_url = urllib.parse.urljoin(final_url, original_url)
+                            # ログ出力（デバッグ用）
+                            print(f"スタイルURL正規化: {original_url} → {absolute_url}")
 
                             # Obfuscate and create proxy URL
                             obfuscated_result = obfuscate_url(absolute_url)
@@ -356,16 +302,12 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             if url_index >= 0:
                                 original_url = url_part[url_index + 4:].strip('\'"')
 
-                                # Handle different URL types
-                                if original_url.startswith('/'):
-                                    absolute_url = f"{base_url}{original_url}"
-                                elif original_url.startswith(('http://', 'https://')):
-                                    absolute_url = original_url
-                                elif original_url.startswith('//'):
-                                    absolute_url = f"{parsed_url.scheme}:{original_url}"
-                                else:
-                                    path_base = '/'.join(parsed_url.path.split('/')[:-1]) if '/' in parsed_url.path else ''
-                                    absolute_url = f"{base_url}{path_base}/{original_url}"
+                                # リダイレクト後のURLを使用して相対パスを解決
+                                final_url = resp.url
+                                # URLの完全な正規化
+                                absolute_url = urllib.parse.urljoin(final_url, original_url)
+                                # ログ出力（デバッグ用）
+                                print(f"メタリフレッシュURL正規化: {original_url} → {absolute_url}")
 
                                 # Obfuscate and create proxy URL
                                 obfuscated_result = obfuscate_url(absolute_url)
