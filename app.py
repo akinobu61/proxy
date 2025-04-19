@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, request, jsonify, redirect
+from flask import Flask, render_template, request, jsonify, redirect, Response
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -47,15 +47,40 @@ def discord_asset_redirect(path):
 
     # WebSocket接続のリダイレクト
     if 'gateway.discord.gg' in path or 'remote-auth-gateway.discord.gg' in path:
-        if 'gateway.discord.gg' in path:
-            ws_path = path
-        else:
-            ws_path = path
-        print(f"Redirecting WebSocket request to /api/ws/{ws_path}")
-        return redirect(f"/api/ws/{ws_path}")
+        print(f"Redirecting WebSocket request directly to wss://{path}")
+        # WebSocketはHTTP RedirectではなくJavaScriptで処理する必要があるため
+        # 説明ページを返す
+        response = """
+        <html>
+        <head><title>WebSocket Connection</title></head>
+        <body>
+            <h1>WebSocket Connection Initiated</h1>
+            <p>WebSocket connection to {0} would be established.</p>
+            <script>
+                // WebSocketへの直接接続を試みる
+                try {{
+                    const ws = new WebSocket('wss://{0}');
+                    ws.onopen = () => console.log('WebSocket connection established');
+                    ws.onmessage = (event) => console.log('Message received:', event.data);
+                    ws.onerror = (error) => console.error('WebSocket error:', error);
+                    ws.onclose = () => console.log('WebSocket connection closed');
+                }} catch(e) {{
+                    console.error('Failed to connect to WebSocket:', e);
+                }}
+            </script>
+        </body>
+        </html>
+        """.format(path)
+        return Response(response, mimetype='text/html')
     
-    # 既にapi/で始まるパスは処理しない（再帰リダイレクト防止）
-    if path.startswith('api/'):
+    # api/assets/ への直接リクエストを処理（通常のリダイレクトでは対応できなかった場合の対処）
+    if path.startswith('api/assets/'):
+        asset_filename = path.replace('api/assets/', '', 1)
+        # Discord CDNへ直接リダイレクト
+        print(f"Direct assets redirect: {asset_filename}")
+        return redirect(f"https://discord.com/assets/{asset_filename}")
+    # 他のapi/で始まるパスは処理しない（再帰リダイレクト防止）
+    elif path.startswith('api/'):
         return render_template('simple_index.html')
     
     # Discord API直接リクエスト
