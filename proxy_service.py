@@ -65,10 +65,14 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
         headers = {key: value for key, value in request.headers.items()
                   if key.lower() not in ['host', 'content-length']}
 
-        # Adjust referer and origin headers to prevent cross-origin issues
-        if 'referer' in headers:
-            # Remove original referer to avoid leaking information
-            del headers['referer']
+        # YouTubeの動画ストリーミングのためにOriginとRefererを調整
+        if 'youtube.com' in url or 'googlevideo.com' in url:
+            headers['Origin'] = 'https://www.youtube.com'
+            headers['Referer'] = 'https://www.youtube.com/'
+        else:
+            # 他のサイトでは単にrefererを削除
+            if 'referer' in headers:
+                del headers['referer']
 
         # Add accept-encoding header to ensure we get the right content
         headers['accept-encoding'] = 'identity'
@@ -80,6 +84,9 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
     try:
         logger.debug(f"Proxying request to {url} with method {method}")
 
+        # YouTubeの動画ストリーミングの場合はタイムアウトを延長
+        request_timeout = 30 if ('googlevideo.com' in url and 'videoplayback' in url) else 10
+
         # Forward the request to the target URL
         resp = requests.request(
             method=method,
@@ -88,7 +95,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
             data=data,
             params=request.args,
             stream=True,
-            timeout=10,
+            timeout=request_timeout,
             allow_redirects=False  # We'll handle redirects manually
         )
 
@@ -378,13 +385,24 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                 response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
                 response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
                 response.headers['Access-Control-Allow-Credentials'] = 'true'
-            elif any(t in content_type.lower() for t in ['video', 'audio', 'stream', 'octet-stream']):
+            elif any(t in content_type.lower() for t in ['video', 'audio', 'stream', 'octet-stream']) or ('googlevideo.com' in url and 'videoplayback' in url):
                 # Streaming content
+                # YouTubeストリーミングの場合は特別処理
+                is_youtube_video = ('googlevideo.com' in url and 'videoplayback' in url)
+                
                 response = Response(
-                    response=resp.iter_content(chunk_size=8192),
+                    response=resp.iter_content(chunk_size=16384 if is_youtube_video else 8192),
                     status=resp.status_code,
                     direct_passthrough=True
                 )
+                
+                # CORSヘッダーの追加（特にYouTube動画の場合）
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+                response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Range'
+                response.headers['Access-Control-Expose-Headers'] = 'Content-Length, Content-Range, Content-Type'
+                
+                # レンジリクエスト対応
                 if 'content-range' in resp.headers:
                     response.headers['content-range'] = resp.headers['content-range']
                 if 'accept-ranges' in resp.headers:

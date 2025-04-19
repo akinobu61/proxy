@@ -14,8 +14,16 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "default_secret_key_for_development")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Enable CORS
-CORS(app)
+# Enable CORS with expanded settings
+CORS(app, resources={
+    r"/*": {
+        "origins": "*",
+        "allow_headers": ["Content-Type", "Authorization", "Accept", "X-Requested-With"],
+        "expose_headers": ["Content-Length", "Content-Type", "X-Content-Type-Options"],
+        "supports_credentials": True,
+        "max_age": 3600
+    }
+})
 
 # Import routes after app is created to avoid circular imports
 from proxy_service import proxy_blueprint
