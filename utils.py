@@ -27,7 +27,11 @@ def xor_encrypt(data, key):
     Simple XOR encryption for URL obfuscation
     """
     key_bytes = key.encode('utf-8')
-    data_bytes = data.encode('utf-8')
+    # Ensure data is in bytes format
+    if isinstance(data, str):
+        data_bytes = data.encode('utf-8')
+    else:
+        data_bytes = data
     key_len = len(key_bytes)
     
     # XOR each byte with the corresponding byte from the key
@@ -43,6 +47,9 @@ def xor_decrypt(data, key):
     Simple XOR decryption (same as encryption)
     """
     # XOR is symmetric, so encryption and decryption are the same
+    # But we need to ensure data is bytes, not str
+    if isinstance(data, str):
+        data = data.encode('utf-8')
     return xor_encrypt(data, key)
 
 def obfuscate_url(url):
