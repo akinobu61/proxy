@@ -402,13 +402,18 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
             if name.lower() not in excluded_headers:
                 response.headers[name] = value
 
-        # Add headers for IndexedDB and Service Worker support
-        response.headers['Service-Worker-Allowed'] = '/'
-        response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
-        response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+        # Add permissive headers for YouTube-like sites and DevTools
+        response.headers['Content-Security-Policy'] = "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data:; connect-src *; frame-src *; media-src *"
+        response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
+        response.headers['Cross-Origin-Embedder-Policy'] = 'credentialless'
         response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
-
-        # Add cache control headers for dynamic content
+        response.headers['Service-Worker-Allowed'] = '/'
+        
+        # Add headers for frame support
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['Frame-Options'] = 'SAMEORIGIN'
+        
+        # Cache control for dynamic content
         if 'text/html' in content_type or 'application/json' in content_type:
             response.headers['Cache-Control'] = 'no-store, must-revalidate'
             response.headers['Pragma'] = 'no-cache'
