@@ -730,6 +730,77 @@ def discord_assets_endpoint():
         logger.error(f"Error in discord_assets_endpoint: {str(e)}")
         return jsonify({"error": f"Asset error: {str(e)}", "status": 500}), 500
 
+# Discord用の追加ルート
+@proxy_blueprint.route('/assets/<path:asset_path>', methods=['GET'])
+def discord_direct_assets(asset_path):
+    """
+    Discordの直接アセットにアクセスするためのエンドポイント
+    """
+    try:
+        # Discord CDNパスを構築
+        discord_cdn_url = f"https://discord.com/assets/{asset_path}"
+        
+        # Content-Typeを判断（拡張子ベース）
+        content_type = 'application/octet-stream'  # デフォルト
+        if asset_path.endswith('.js'):
+            content_type = 'application/javascript'
+        elif asset_path.endswith('.css'):
+            content_type = 'text/css'
+        elif asset_path.endswith('.woff2'):
+            content_type = 'font/woff2'
+        elif asset_path.endswith('.svg'):
+            content_type = 'image/svg+xml'
+        elif asset_path.endswith('.png'):
+            content_type = 'image/png'
+        elif asset_path.endswith('.webp'):
+            content_type = 'image/webp'
+        elif asset_path.endswith('.wasm'):
+            content_type = 'application/wasm'
+        
+        # ヘッダーセットアップ
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': '*/*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': 'https://discord.com',
+            'Referer': 'https://discord.com/',
+        }
+        
+        # 直接リクエスト実行（少しスピードアップするためにwait時間を0に）
+        wait_time = 0 if (asset_path.endswith('.js') or asset_path.endswith('.wasm')) else DEFAULT_WAIT_TIME
+        if wait_time > 0:
+            time.sleep(wait_time)
+            
+        resp = requests.get(discord_cdn_url, headers=headers, stream=True, timeout=40)
+        
+        # WebAssemblyまたはJavaScriptファイルの場合は特別処理
+        if asset_path.endswith('.wasm'):
+            response = Response(
+                resp.iter_content(chunk_size=32768),
+                status=resp.status_code,
+                mimetype='application/wasm',
+                direct_passthrough=True
+            )
+            response.headers['Content-Type'] = 'application/wasm'
+        else:
+            response = Response(
+                resp.iter_content(chunk_size=16384),
+                status=resp.status_code,
+                mimetype=content_type,
+                direct_passthrough=True
+            )
+            response.headers['Content-Type'] = content_type
+            
+        # CORSヘッダー
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error in discord_direct_assets: {str(e)}")
+        return jsonify({"error": f"Asset error: {str(e)}", "status": 500}), 500
+
 @proxy_blueprint.route('/wasm-fix', methods=['OPTIONS', 'GET'])
 def wasm_fix_endpoint():
     """

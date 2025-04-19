@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -30,6 +30,20 @@ from proxy_service import proxy_blueprint
 
 # Register blueprints
 app.register_blueprint(proxy_blueprint)
+
+# Discord特有の静的アセットのリダイレクト
+@app.route('/<path:path>', methods=['GET'])
+def discord_asset_redirect(path):
+    """
+    Discordアセットリダイレクトハンドラ
+    """
+    # 特定の拡張子を持つDiscordアセットへのリクエストをAPIルートにリダイレクト
+    special_extensions = ['.js', '.wasm', '.woff2', '.svg', '.png', '.webp', '.css', '.ico']
+    if any(path.endswith(ext) for ext in special_extensions):
+        return redirect(f"/api/assets/{path}")
+    
+    # デフォルトのルート（上記に当てはまらない場合はインデックスページに戻る）
+    return render_template('simple_index.html')
 
 # Home route - シンプルなホームページを表示
 @app.route('/')
