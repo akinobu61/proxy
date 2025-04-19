@@ -413,10 +413,10 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
             "font-src * data:; "
             "connect-src * blob:; "
             "frame-src *; "
-            "media-src *; "
+            "media-src * blob:; "
             "worker-src * blob:; "
             "require-trusted-types-for 'script'; "
-            "trusted-types 'allow-duplicates' default dompurify google html-sanitizer goog#html jsaction fast-html-policy TrustedTypesPolicy"
+            "trusted-types 'allow-duplicates' default dompurify google html-sanitizer goog#html jsaction fast-html-policy TrustedTypesPolicy goog#gapi polymer-template-event-attribute-policy"
         )
         
         # Add security headers
