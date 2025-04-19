@@ -415,6 +415,14 @@ DEFAULT_WAIT_TIME = 1
 def create_proxy_url(obfuscated_url):
     return f"/api/{obfuscated_url}"
 
+@proxy_blueprint.route('/<path:obfuscated_url>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
+@rate_limit
+def direct_proxy_endpoint(obfuscated_url):
+    """
+    Direct proxy endpoint that accepts an obfuscated URL and forwards the request
+    """
+    return proxy_endpoint(obfuscated_url)
+
 @proxy_blueprint.route('/proxy/<path:obfuscated_url>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 @rate_limit
 def proxy_endpoint(obfuscated_url):
