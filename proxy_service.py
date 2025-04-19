@@ -65,10 +65,19 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
         headers = {key: value for key, value in request.headers.items()
                   if key.lower() not in ['host', 'content-length']}
 
-        # YouTubeの動画ストリーミングのためにOriginとRefererを調整
+        # サイト特有の設定
         if 'youtube.com' in url or 'googlevideo.com' in url:
+            # YouTubeの動画ストリーミングのためにOriginとRefererを調整
             headers['Origin'] = 'https://www.youtube.com'
             headers['Referer'] = 'https://www.youtube.com/'
+        elif 'discord.com' in url or 'discordapp.com' in url:
+            # Discordのための特殊ヘッダー設定
+            headers['Origin'] = 'https://discord.com'
+            headers['Referer'] = 'https://discord.com/'
+            # Discordアプリケーションでは一般的に使用される一部のヘッダーを追加
+            headers['Sec-Fetch-Dest'] = 'empty'
+            headers['Sec-Fetch-Mode'] = 'cors'
+            headers['Sec-Fetch-Site'] = 'same-origin'
         else:
             # 他のサイトでは単にrefererを削除
             if 'referer' in headers:
@@ -84,8 +93,14 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
     try:
         logger.debug(f"Proxying request to {url} with method {method}")
 
-        # YouTubeの動画ストリーミングの場合はタイムアウトを延長
-        request_timeout = 30 if ('googlevideo.com' in url and 'videoplayback' in url) else 10
+        # タイムアウト設定
+        request_timeout = 30
+        if 'googlevideo.com' in url and 'videoplayback' in url:
+            # YouTube動画は長めのタイムアウト
+            request_timeout = 60
+        elif 'discord.com' in url or 'discordapp.com' in url:
+            # Discordリクエストも長めのタイムアウト
+            request_timeout = 40
 
         # Forward the request to the target URL
         resp = requests.request(
@@ -385,22 +400,36 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                 response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
                 response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
                 response.headers['Access-Control-Allow-Credentials'] = 'true'
-            elif any(t in content_type.lower() for t in ['video', 'audio', 'stream', 'octet-stream']) or ('googlevideo.com' in url and 'videoplayback' in url):
+            elif any(t in content_type.lower() for t in ['video', 'audio', 'stream', 'octet-stream', 'wasm']) or ('googlevideo.com' in url and 'videoplayback' in url) or url.endswith('.wasm'):
                 # Streaming content
-                # YouTubeストリーミングの場合は特別処理
+                # 特別な処理が必要なコンテンツタイプ
                 is_youtube_video = ('googlevideo.com' in url and 'videoplayback' in url)
+                is_wasm = 'wasm' in content_type.lower() or url.endswith('.wasm')
+                
+                # ストリーミングチャンクサイズの最適化
+                chunk_size = 8192  # デフォルトサイズ
+                if is_youtube_video:
+                    chunk_size = 16384  # YouTube動画用の大きいチャンクサイズ
+                elif is_wasm or ('discord.com' in url or 'discordapp.com' in url):
+                    chunk_size = 32768  # WebAssemblyとDiscordアセット用のもっと大きいチャンクサイズ
                 
                 response = Response(
-                    response=resp.iter_content(chunk_size=16384 if is_youtube_video else 8192),
+                    response=resp.iter_content(chunk_size=chunk_size),
                     status=resp.status_code,
                     direct_passthrough=True
                 )
                 
-                # CORSヘッダーの追加（特にYouTube動画の場合）
+                # WebAssemblyのMIMEタイプを正しく設定
+                if is_wasm:
+                    response.mimetype = 'application/wasm'
+                
+                # CORSヘッダーの追加（特殊コンテンツタイプ用）
                 response.headers['Access-Control-Allow-Origin'] = '*'
-                response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-                response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Range'
-                response.headers['Access-Control-Expose-Headers'] = 'Content-Length, Content-Range, Content-Type'
+                response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
+                response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Range, X-Requested-With, Authorization'
+                response.headers['Access-Control-Expose-Headers'] = 'Content-Length, Content-Range, Content-Type, Accept-Ranges'
+                response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+                response.headers['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
                 
                 # レンジリクエスト対応
                 if 'content-range' in resp.headers:
@@ -668,3 +697,71 @@ def health_check():
     Health check endpoint
     """
     return jsonify({"status": "ok"})
+
+@proxy_blueprint.route('/discord-assets', methods=['GET'])
+def discord_assets_endpoint():
+    """
+    Discord用の特殊アセット取得エンドポイント
+    """
+    try:
+        asset_path = request.args.get('path', '')
+        if not asset_path:
+            return jsonify({"error": "Asset path is required", "status": 400}), 400
+        
+        # Discord CDNパスを構築
+        discord_cdn_url = f"https://discord.com/assets/{asset_path}"
+        
+        # ヘッダーセットアップ
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': '*/*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': 'https://discord.com',
+            'Referer': 'https://discord.com/',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+        }
+        
+        # 特別な設定でリクエスト
+        return proxy_request(discord_cdn_url, headers=headers, is_resource=True)
+    
+    except Exception as e:
+        logger.error(f"Error in discord_assets_endpoint: {str(e)}")
+        return jsonify({"error": f"Asset error: {str(e)}", "status": 500}), 500
+
+@proxy_blueprint.route('/wasm-fix', methods=['OPTIONS', 'GET'])
+def wasm_fix_endpoint():
+    """
+    WebAssembly MIME型修正エンドポイント
+    """
+    if request.method == 'OPTIONS':
+        response = Response("")
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Range, X-Requested-With, Authorization'
+        response.headers['Access-Control-Max-Age'] = '3600'
+        return response
+    
+    try:
+        wasm_url = request.args.get('url', '')
+        if not wasm_url:
+            return jsonify({"error": "WASM URL is required", "status": 400}), 400
+        
+        # ヘッダーセットアップ
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': '*/*',
+            'Accept-Language': 'en-US,en;q=0.9',
+        }
+        
+        # WebAssembly専用処理でリクエスト
+        resp = requests.get(wasm_url, headers=headers, stream=True, timeout=30)
+        response = Response(resp.iter_content(chunk_size=32768), mimetype='application/wasm')
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Content-Type'] = 'application/wasm'
+        return response
+    
+    except Exception as e:
+        logger.error(f"Error in wasm_fix_endpoint: {str(e)}")
+        return jsonify({"error": f"WASM error: {str(e)}", "status": 500}), 500
