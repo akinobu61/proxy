@@ -409,11 +409,11 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
             "style-src * 'unsafe-inline' data:; "
             "img-src * data: blob:; "
             "font-src * data:; "
-            "connect-src * blob: https: http:; "
+            "connect-src * data: blob: https: http:; "
             "frame-src *; "
-            "media-src * blob: https: http:; "
-            "worker-src * blob:; "
-            "trusted-types 'allow-duplicates' * default dompurify google html-sanitizer goog#html jsaction fast-html-policy TrustedTypesPolicy goog#gapi polymer-template polymer#html polymer#url polymer#dynamic polymer#imported"
+            "media-src * data: blob: https: http:; "
+            "worker-src * data: blob:; "
+            "trusted-types 'allow-duplicates' * default dompurify google html-sanitizer goog#html jsaction fast-html-policy TrustedTypesPolicy goog#gapi polymer-template polymer-html-literal polymer#imported"
         )
 
         # Add security headers
@@ -421,12 +421,11 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
         response.headers['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
         response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
         response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = '*'
-        response.headers['Access-Control-Allow-Headers'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Range'
         response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Expose-Headers'] = '*'
-        response.headers['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
-        response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+        response.headers['Access-Control-Expose-Headers'] = 'Content-Length, Content-Range'
+        response.headers['Access-Control-Max-Age'] = '3600'
         response.headers['Service-Worker-Allowed'] = '/'
         response.headers['Access-Control-Allow-Origin'] = '*'
         response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
