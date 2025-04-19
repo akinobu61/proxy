@@ -41,6 +41,8 @@
                         <a href="#introduction" class="list-group-item list-group-item-action">Introduction</a>
                         <a href="#url-obfuscation" class="list-group-item list-group-item-action">URL Obfuscation</a>
                         <a href="#proxy-endpoint" class="list-group-item list-group-item-action">Proxy Endpoint</a>
+                        <a href="#search-endpoint" class="list-group-item list-group-item-action">Search Endpoint</a>
+                        <a href="#direct-url" class="list-group-item list-group-item-action">Direct URL Access</a>
                         <a href="#rate-limiting" class="list-group-item list-group-item-action">Rate Limiting</a>
                         <a href="#error-handling" class="list-group-item list-group-item-action">Error Handling</a>
                         <a href="#examples" class="list-group-item list-group-item-action">Examples</a>
@@ -151,6 +153,69 @@
   "error": "Error proxying request: {error details}",
   "status": 502
 }</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h2 id="search-endpoint" class="mb-0">Search Endpoint</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>Endpoint: <code>/api/search</code></h4>
+                        <p>This endpoint mimics search engine requests and proxies them through the API service.</p>
+                        
+                        <h5>Request</h5>
+                        <ul>
+                            <li><strong>Method:</strong> GET, POST</li>
+                            <li><strong>Query Parameters:</strong> Standard search parameters (q, etc.)</li>
+                        </ul>
+                        
+                        <h5>Response</h5>
+                        <p>The search endpoint returns the HTML response from the search engine with links modified to work through the proxy.</p>
+                        
+                        <h5>Example</h5>
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Example Request</div>
+                            <div class="card-body">
+<pre><code>GET /api/search?q=example+search+query</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h2 id="direct-url" class="mb-0">Direct URL Access</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>Endpoint: <code>/api/direct_url</code></h4>
+                        <p>This endpoint allows you to directly access a URL through the proxy by providing it as a parameter.</p>
+                        
+                        <h5>Request</h5>
+                        <ul>
+                            <li><strong>Method:</strong> GET</li>
+                            <li><strong>Query Parameters:</strong> url - The URL to access through the proxy</li>
+                        </ul>
+                        
+                        <h5>Response</h5>
+                        <p>The endpoint returns a JSON object with the proxy URL:</p>
+                        
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Success Response (200 OK)</div>
+                            <div class="card-body">
+<pre><code>{
+  "proxy_url": "/api/proxy/encoded_string.checksum"
+}</code></pre>
+                            </div>
+                        </div>
+                        
+                        <h5>Example</h5>
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">Example Request</div>
+                            <div class="card-body">
+<pre><code>GET /api/direct_url?url=https://example.com</code></pre>
                             </div>
                         </div>
                     </div>
