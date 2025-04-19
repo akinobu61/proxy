@@ -403,10 +403,9 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                 response.headers[name] = value
 
         # Add permissive headers for YouTube-like sites and DevTools
-        # より許容的なCSPヘッダー
         response.headers['Content-Security-Policy'] = (
             "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; "
-            "script-src * 'unsafe-inline' 'unsafe-eval' data: blob: 'self' "
+            "script-src * 'unsafe-inline' 'unsafe-eval' data: blob: 'self' 'unsafe-hashes' 'wasm-unsafe-eval' "
             "https://*.replit.dev https://*.replit.com https://*.google.com https://*.googleapis.com "
             "https://*.gstatic.com https://accounts.google.com; "
             "style-src * 'unsafe-inline' data:; "
@@ -416,9 +415,17 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
             "frame-src *; "
             "media-src *; "
             "worker-src * blob:; "
-            "trusted-types *; "
-            "require-trusted-types-for 'script'"
+            "require-trusted-types-for 'script'; "
+            "trusted-types 'allow-duplicates' default dompurify google html-sanitizer goog#html jsaction fast-html-policy TrustedTypesPolicy"
         )
+        
+        # Add security headers
+        response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
+        response.headers['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
+        response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+        
+        # Add Permissions-Policy header
+        response.headers['Permissions-Policy'] = 'trusted-types=*'
         
         # CORSとセキュリティヘッダーの更新
         response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
