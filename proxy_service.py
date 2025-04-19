@@ -403,11 +403,32 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                 response.headers[name] = value
 
         # Add permissive headers for YouTube-like sites and DevTools
-        response.headers['Content-Security-Policy'] = "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data:; connect-src *; frame-src *; media-src *"
+        # より許容的なCSPヘッダー
+        response.headers['Content-Security-Policy'] = (
+            "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; "
+            "script-src * 'unsafe-inline' 'unsafe-eval' data: blob: 'self' "
+            "https://*.replit.dev https://*.replit.com https://*.google.com https://*.googleapis.com "
+            "https://*.gstatic.com https://accounts.google.com; "
+            "style-src * 'unsafe-inline' data:; "
+            "img-src * data: blob:; "
+            "font-src * data:; "
+            "connect-src * blob:; "
+            "frame-src *; "
+            "media-src *; "
+            "worker-src * blob:; "
+            "trusted-types *; "
+            "require-trusted-types-for 'script'"
+        )
+        
+        # CORSとセキュリティヘッダーの更新
         response.headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups'
-        response.headers['Cross-Origin-Embedder-Policy'] = 'credentialless'
+        response.headers['Cross-Origin-Embedder-Policy'] = 'unsafe-none'
         response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
         response.headers['Service-Worker-Allowed'] = '/'
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
+        response.headers['Access-Control-Allow-Headers'] = '*'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
         
         # Add headers for frame support
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
