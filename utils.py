@@ -52,16 +52,26 @@ def xor_decrypt(data, key):
         data = data.encode('utf-8')
     return xor_encrypt(data, key)
 
-def obfuscate_url(url):
+def obfuscate_url(url, expiry_hours=1):
     """
     Obfuscate a URL using a combination of XOR encryption and base64 encoding
+    
+    Args:
+        url (str): The URL to obfuscate
+        expiry_hours (int, optional): Number of hours before the URL expires. Defaults to 1.
+        
+    Returns:
+        dict: Dictionary containing the obfuscated URL and expiry information
     """
     try:
         # Normalize the URL
         url = urllib.parse.unquote(url)
         
+        # Get current timestamp
+        current_time = datetime.now()
+        
         # Add a timestamp to prevent replay attacks
-        timestamped_url = f"{url}|{datetime.now().timestamp()}"
+        timestamped_url = f"{url}|{current_time.timestamp()}"
         
         # Encrypt the URL
         encrypted = xor_encrypt(timestamped_url, ENCRYPTION_KEY)
@@ -73,16 +83,34 @@ def obfuscate_url(url):
         checksum = hashlib.md5(encoded.encode('utf-8')).hexdigest()[:8]
         obfuscated = f"{encoded}.{checksum}"
         
-        return obfuscated
+        # Calculate expiry time
+        expiry_time = current_time.replace(microsecond=0)
+        expiry_timestamp = (expiry_time.timestamp() + (expiry_hours * 3600))
+        expiry_str = datetime.fromtimestamp(expiry_timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Return as dictionary with additional info
+        return {
+            "status": "success",
+            "obfuscated_url": obfuscated,
+            "original_url": url,
+            "expiry": expiry_str
+        }
     
     except Exception as e:
         logger.error(f"Error obfuscating URL: {str(e)}")
         return None
 
-def deobfuscate_url(obfuscated):
+def deobfuscate_url(obfuscated, expiry_check=True):
     """
     Deobfuscate a URL by reversing the obfuscation process
-    URLs expire after 1 hour
+    URLs expire after 1 hour by default
+    
+    Args:
+        obfuscated (str): The obfuscated URL to decode
+        expiry_check (bool, optional): Whether to check URL expiry. Defaults to True.
+        
+    Returns:
+        str or None: The original URL if valid, None if invalid or expired
     """
     try:
         # Check format and extract parts
@@ -118,11 +146,13 @@ def deobfuscate_url(obfuscated):
         url = parts[0]
         try:
             timestamp = float(parts[1])
-            # Check if URL has expired (1 hour = 3600 seconds)
-            current_time = datetime.now().timestamp()
-            if current_time - timestamp > 3600:
-                logger.warning("URL has expired (older than 1 hour)")
-                return None
+            
+            # Check if URL has expired (default 1 hour = 3600 seconds)
+            if expiry_check:
+                current_time = datetime.now().timestamp()
+                if current_time - timestamp > 3600:
+                    logger.warning("URL has expired (older than 1 hour)")
+                    return None
         except Exception as e:
             logger.error(f"Error parsing timestamp: {str(e)}")
             return None

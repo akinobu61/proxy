@@ -23,21 +23,10 @@ from proxy_service import proxy_blueprint
 # Register blueprints
 app.register_blueprint(proxy_blueprint)
 
-# Home route - redirect to API info
+# Home route - シンプルなホームページを表示
 @app.route('/')
 def index():
-    return jsonify({
-        "api": "Proxy API Service",
-        "version": "1.0",
-        "description": "URL obfuscation and proxy service",
-        "endpoints": {
-            "/api/obfuscate": "POST - Obfuscate a URL",
-            "/api/proxy/{obfuscated_url}": "GET/POST/etc - Access content through proxy",
-            "/api/search": "GET - Search engine proxy",
-            "/api/direct_url": "GET - Direct URL access"
-        },
-        "note": "URLs expire after 1 hour"
-    })
+    return render_template('simple_index.html')
 
 # API Documentation - JSON format
 @app.route('/docs')

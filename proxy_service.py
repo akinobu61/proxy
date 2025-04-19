@@ -337,15 +337,34 @@ def obfuscate_endpoint():
     if not is_valid_url(url):
         return jsonify({"error": "Invalid URL", "status": 400}), 400
     
+    # Get expiry hours (default to 1 hour if not provided)
+    expiry_hours = data.get('expiry_hours', 1)
+    
     try:
-        obfuscated = obfuscate_url(url)
+        # Get obfuscated URL with expiry
+        obfuscated_result = obfuscate_url(url, expiry_hours)
+        
+        # Check if it's a dictionary (new format with expiry info) or just a string
+        if isinstance(obfuscated_result, dict):
+            obfuscated = obfuscated_result.get('obfuscated_url')
+            expiry = obfuscated_result.get('expiry')
+        else:
+            obfuscated = obfuscated_result
+            expiry = None
+            
         proxy_url = f"{request.url_root.rstrip('/')}/api/proxy/{obfuscated}"
         
-        return jsonify({
+        response = {
             "original_url": url,
             "obfuscated_url": obfuscated,
             "proxy_url": proxy_url
-        })
+        }
+        
+        # Add expiry info if available
+        if expiry:
+            response["expiry"] = expiry
+            
+        return jsonify(response)
     
     except Exception as e:
         logger.error(f"Error in obfuscate_endpoint: {str(e)}")
