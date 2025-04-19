@@ -38,19 +38,43 @@ def discord_asset_redirect(path):
     Discordアセットリダイレクトハンドラ
     """
     # 特定の拡張子を持つDiscordアセットへのリクエストをAPIルートにリダイレクト
-    special_extensions = ['.js', '.wasm', '.woff2', '.svg', '.png', '.webp', '.css', '.ico']
+    special_extensions = ['.js', '.wasm', '.woff2', '.svg', '.png', '.webp', '.css', '.ico', '.js.map', '.css.map']
     
     # 拡張子チェック
     has_special_ext = any(path.endswith(ext) for ext in special_extensions)
     
-    # assets/assetsの二重パス構造への対応（これはDiscord特有の構造）
-    if path.startswith('assets/') and has_special_ext:
-        # assets/assets/filename.js のような二重パスを処理
-        # 直接Discord CDNへのパスを構築するためにassets部分を完全に削除
-        actual_path = path.replace('assets/', '', 1)
+    print(f"Discord asset redirect request for path: {path}")
+
+    # WebSocket接続のリダイレクト
+    if 'gateway.discord.gg' in path or 'remote-auth-gateway.discord.gg' in path:
+        if 'gateway.discord.gg' in path:
+            ws_path = path
+        else:
+            ws_path = path
+        print(f"Redirecting WebSocket request to /api/ws/{ws_path}")
+        return redirect(f"/api/ws/{ws_path}")
+    
+    # 既にapi/で始まるパスは処理しない（再帰リダイレクト防止）
+    if path.startswith('api/'):
+        return render_template('simple_index.html')
+    
+    # Discord API直接リクエスト
+    if path.startswith('api/v') and 'discord.com' in request.host:
+        api_path = path
+        return redirect(f"https://discord.com/{api_path}")
+    
+    # assets/assetsの二重パス構造への対応
+    if path.startswith('assets/assets/') and has_special_ext:
+        actual_path = path.replace('assets/assets/', '', 1)
+        print(f"Redirecting assets/assets/ path to /api/assets/{actual_path}")
+        return redirect(f"/api/assets/{actual_path}")
+    elif path.startswith('assets/') and has_special_ext:
+        actual_path = path.replace('assets/', '', 1) 
+        print(f"Redirecting assets/ path to /api/assets/{actual_path}")
         return redirect(f"/api/assets/{actual_path}")
     elif has_special_ext:
         # 通常のファイル
+        print(f"Redirecting normal asset to /api/assets/{path}")
         return redirect(f"/api/assets/{path}")
     
     # デフォルトのルート（上記に当てはまらない場合はインデックスページに戻る）

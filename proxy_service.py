@@ -838,6 +838,62 @@ def discord_direct_assets(asset_path):
         logger.error(f"Error in discord_direct_assets: {str(e)}")
         return jsonify({"error": f"Asset error: {str(e)}", "status": 500}), 500
 
+# API WebSocketサポート
+@proxy_blueprint.route('/ws/<path:path>', methods=['GET', 'POST', 'OPTIONS'])
+def websocket_proxy(path):
+    """
+    WebSocketプロキシエンドポイント
+    """
+    if request.method == 'OPTIONS':
+        response = Response("")
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Sec-WebSocket-Key, Sec-WebSocket-Version, Sec-WebSocket-Extensions, Upgrade, Connection'
+        response.headers['Access-Control-Max-Age'] = '3600'
+        return response
+    
+    try:
+        # Discord WebSocket エンドポイント
+        if 'gateway.discord.gg' in path or 'remote-auth-gateway.discord.gg' in path:
+            if 'gateway.discord.gg' in path:
+                ws_url = f"wss://gateway.discord.gg/{path.split('gateway.discord.gg/')[-1]}"
+            else:
+                ws_url = f"wss://remote-auth-gateway.discord.gg/{path.split('remote-auth-gateway.discord.gg/')[-1]}"
+            
+            print(f"WebSocketプロキシリクエスト: {ws_url}")
+            
+            # ヘッダーセットアップ
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36',
+                'Origin': 'https://discord.com',
+                'Sec-WebSocket-Version': '13'
+            }
+            
+            # WebSocketリクエストヘッダーの保持
+            for header in ['Sec-WebSocket-Key', 'Sec-WebSocket-Extensions', 'Sec-WebSocket-Protocol']:
+                if header in request.headers:
+                    headers[header] = request.headers[header]
+            
+            # アップグレードヘッダーの設定
+            headers['Connection'] = 'Upgrade'
+            headers['Upgrade'] = 'websocket'
+            
+            # WebSocketリクエストの転送
+            response = Response("", status=101)
+            response.headers['Connection'] = 'Upgrade'
+            response.headers['Upgrade'] = 'websocket'
+            response.headers['Sec-WebSocket-Accept'] = request.headers.get('Sec-WebSocket-Key', '')
+            if 'Sec-WebSocket-Protocol' in request.headers:
+                response.headers['Sec-WebSocket-Protocol'] = request.headers['Sec-WebSocket-Protocol']
+            
+            return response
+        else:
+            return jsonify({"error": "Unsupported WebSocket endpoint", "status": 400}), 400
+    
+    except Exception as e:
+        print(f"WebSocketプロキシエラー: {str(e)}")
+        return jsonify({"error": f"WebSocket error: {str(e)}", "status": 500}), 500
+
 @proxy_blueprint.route('/wasm-fix', methods=['OPTIONS', 'GET'])
 def wasm_fix_endpoint():
     """

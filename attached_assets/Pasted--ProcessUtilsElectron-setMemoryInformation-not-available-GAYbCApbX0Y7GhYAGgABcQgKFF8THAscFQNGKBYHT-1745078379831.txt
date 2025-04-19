@@ -1,0 +1,515 @@
+[ProcessUtilsElectron] setMemoryInformation not available.
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12 [default] [BUILD INFO] Release Channel: stable, Build Number: 391738, Version Hash: 51404a7da46dbdef363f2e57d46db9344c942ced
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12 AppCrashedFatalReport: getLastCrash not supported.
+cdn-cgi/challenge-platform/h/g/jsd/r/0.1553485916523261:1745075371:7eri0v8uc0XyephsxipGGQ522ognCLBPu2kzPtHnI_0/932d99870d793de6:1 
+            
+            
+           Failed to load resource: the server responded with a status of 405 (Method Not Allowed)
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [libdiscore] The answer for life the universe and everything is: 42
+api/assets/5bd05c417b9c465b.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/0803b84d429a781a.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/5835f1b9002efa70.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/c1ed80bf8e389c10.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/c7724028cc715f88.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/d608924869a312af.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/13419e2bdb8bb888.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/a0dbd0fede11261b.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/279075a7f5dc7eed.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/8dfcc66d4b442293.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/4c549b9432a2f390.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/02c83c01e8e2c909.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/2d22366f15122202.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/64fbc7c81833d339.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/dd28704e6a810199.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/cee43ed9ac7243dc.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/e9f0cce44948ca42.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/227ed031cc8d761f.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/a922038a3a30345c.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/452e094455c7630e.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/2e4eb19de69e3bde.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/c8a1f5b785ea11da.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/e01560c8d93e2569.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/0fb5f7060c8a2b0c.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/b5a9d3fba73b119d.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/e1b0f5f906b052cf.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/ea1c5d109acab8a5.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/1d7159cc0bbfd81b.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/5f18031c605d3b73.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/eab7cfb4fd6590f4.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/e9fefc8a5e5353db.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/8bbd731a88c45385.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/78f65301d6af9c92.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/605f2895474619ee.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/48cc66fb2c6c938e.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/cf17f3f5a9e53268.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/1dc7f31bebc8d0ef.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/f2c32dccb3f18f71.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/26da3c5212410a76.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/c25b592337d28733.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/6f7dadeb0cce6ed9.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/520b370978694622.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/5536a8be0d0f3158.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/a54fbaf634c5745b.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/035a38b821e4298b.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/91a8236e050e3642.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/b2fef6ecb955c7a3.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/3893366eace37d95.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/664cc5e3d41dcc67.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/e73f6150f66d8cf8.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/044c99bc774aea02.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/338606a9f2c1ceca.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/9f8b5e79a84792a2.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/0b82afe0b88799ad.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/36013b58b3bc2fc0.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/213f713360922844.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/06b0ae3c9eb74909.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/58db75a48f5dc45a.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/b1f403a171a51673.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/ab7b46ce32cb308c.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/057f86cb5bcd122f.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/b0852b861ddd0357.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/2002eee48de600f0.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/8dfefd3c2c52c883.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/cb5b52a9117c1084.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/b6e9ccda913fc06c.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/561f16af1bbfdd83.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/743b364d6dbd980c.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/6631e5cbce9e52ee.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/e23b25199556b542.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/44a7deb9531beaca.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/f6d580510c36ac08.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/a04d39ec63075647.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/6a1c91355051c73e.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/186b56a971241802.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/fbef943c09f2b1ba.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/2e1a79f0aa968751.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/f36699859ac09f89.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/845d9627ebb41aab.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/8eb5930881e4dee1.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/b1a8d8f169d1e46a.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/aef5292fbe0854be.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/454b27b1746ef6ec.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/6697a2833cba7625.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/f600f623e08eb458.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [0ms] connecting to wss://remote-auth-gateway.discord.gg/?v=2
+api/assets/bbf69e8c069b6a61.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+a14aa2da2c6a26dc.js:1 WebSocket connection to 'wss://remote-auth-gateway.discord.gg/?v=2' failed: 
+(anonymous) @ a14aa2da2c6a26dc.js:1
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [66ms] disconnected, error: {"isTrusted":true}
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] Could not complete QR code login, trying to restart with a new QR code.
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [67ms] disconnected, code: 1006 
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] Could not complete QR code login, trying to restart with a new QR code.
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+api/assets/9350709329e1dc5b.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/abc94d7cf8d87f8c.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+discord.com/api/v9/auth/conditional/start:1 
+            
+            
+           Failed to load resource: the server responded with a status of 400 ()
+discord.com/api/v9/auth/location-metadata:1 
+            
+            
+           Failed to load resource: the server responded with a status of 400 ()
+api/assets/ad67e5ade7ce1855.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/c1e89b00fc44234f.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/b1cdd404da71857e.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/3c81bd0ddecae095.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/113172d26ae3aed3.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/6877e7d6a8b82ae6.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/c125bd0287987a2f.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/08ca6ffca6f1c616.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/423b903eb0a6275e.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+api/assets/48d21d7ea2a31456.js:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] document is not visible, will defer reconnection when document becomes visible.
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] reconnecting, now that document is visible
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [7342ms] cleaning up
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [0ms] connecting to wss://remote-auth-gateway.discord.gg/?v=2
+a14aa2da2c6a26dc.js:1 WebSocket connection to 'wss://remote-auth-gateway.discord.gg/?v=2' failed: 
+(anonymous) @ a14aa2da2c6a26dc.js:1
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [52ms] disconnected, error: {"isTrusted":true}
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] Could not complete QR code login, trying to restart with a new QR code.
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [52ms] disconnected, code: 1006 
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] Could not complete QR code login, trying to restart with a new QR code.
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] document is not visible, will defer reconnection when document becomes visible.
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] reconnecting, now that document is visible
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [25170ms] cleaning up
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [0ms] connecting to wss://remote-auth-gateway.discord.gg/?v=2
+a14aa2da2c6a26dc.js:1 WebSocket connection to 'wss://remote-auth-gateway.discord.gg/?v=2' failed: 
+(anonymous) @ a14aa2da2c6a26dc.js:1
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [52ms] disconnected, error: {"isTrusted":true}
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] Could not complete QR code login, trying to restart with a new QR code.
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [53ms] disconnected, code: 1006 
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] Could not complete QR code login, trying to restart with a new QR code.
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [KeyboardLayoutMapUtils] KeyboardMapper - Error adding event Object
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [Flux] Dispatching LOGIN
+discord.com/api/v9/auth/login:1 
+            
+            
+           Failed to load resource: the server responded with a status of 400 ()
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [Flux] Dispatching LOGIN
+discord.com/api/v9/auth/login:1 
+            
+            
+           Failed to load resource: the server responded with a status of 400 ()
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [28307ms] cleaning up
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [0ms] connecting to wss://remote-auth-gateway.discord.gg/?v=2
+a14aa2da2c6a26dc.js:1 WebSocket connection to 'wss://remote-auth-gateway.discord.gg/?v=2' failed: 
+(anonymous) @ a14aa2da2c6a26dc.js:1
+sn @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+lf @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+s8 @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+ib @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+ld @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+lu @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+s2 @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+I @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+P @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+A.<computed> @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+R @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+w @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [394ms] disconnected, error: {"isTrusted":true}
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] Could not complete QR code login, trying to restart with a new QR code.
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+(anonymous) @ a14aa2da2c6a26dc.js:1
+i.onerror @ a14aa2da2c6a26dc.js:1
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] [395ms] disconnected, code: 1006 
+GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14 [LoginQRSocket] Could not complete QR code login, trying to restart with a new QR code.
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGLBYLFwcLS2gOAU8RS1lJTVNEWj5LVlFbGBYjWlJNRUJYQEtXSEdtRlVWQ0E=.636a1e1a:14
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+(anonymous) @ GAYbCApbX0Y7GhYAGgABcQgKFF8THAscFQNGKBYHTRYUBjlSXU9HSlZOHwRGUG5dDxAJQ1JrXlVOSEBZQFdTRVlqQFE=.4dc7dcd5:12
+(anonymous) @ a14aa2da2c6a26dc.js:1
+i.onclose @ a14aa2da2c6a26dc.js:1
