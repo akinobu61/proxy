@@ -146,32 +146,44 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             continue
                             
                         try:
-                            # Handle relative URLs
-                            if href.startswith('/'):
-                                absolute_url = f"{base_url}{href}"
-                            # Handle absolute URLs
+                            # 現在のURLからベースURLとパスを取得
+                            current_url_parsed = urllib.parse.urlparse(url)
+                            current_base = f"{current_url_parsed.scheme}://{current_url_parsed.netloc}"
+                            current_path = '/'.join(current_url_parsed.path.split('/')[:-1]) if '/' in current_url_parsed.path else ''
+
+                            # hrefを正規化
+                            if href.startswith('//'):
+                                absolute_url = f"{current_url_parsed.scheme}:{href}"
+                            elif href.startswith('/'):
+                                absolute_url = f"{current_base}{href}"
                             elif href.startswith(('http://', 'https://')):
                                 absolute_url = href
-                            # Handle protocol-relative URLs (//example.com)
-                            elif href.startswith('//'):
-                                absolute_url = f"{parsed_url.scheme}:{href}"
                             else:
-                                # Other relative paths (not starting with /)
-                                path_base = '/'.join(parsed_url.path.split('/')[:-1]) if '/' in parsed_url.path else ''
-                                absolute_url = f"{base_url}{path_base}/{href}"
+                                absolute_url = f"{current_base}{current_path}/{href}"
 
-                            # 正規化されたURLを生成
-                            absolute_url = urllib.parse.urljoin(base_url, absolute_url)
+                            # 最終的なURLを正規化
+                            normalized_url = urllib.parse.urljoin(url, absolute_url)
                             
-                            # URLを難読化して新しいプロキシURLを作成
-                            obfuscated_result = obfuscate_url(absolute_url)
+                            # URLを難読化
+                            obfuscated_result = obfuscate_url(normalized_url)
                             if isinstance(obfuscated_result, dict):
                                 obfuscated = obfuscated_result.get('obfuscated_url')
                             else:
                                 obfuscated = obfuscated_result
                                 
                             if obfuscated:
-                                link['href'] = f"/api/proxy/{obfuscated}"
+                                proxy_url = f"/api/proxy/{obfuscated}"
+                                link['href'] = proxy_url
+                                
+                            # data-href属性がある場合も処理
+                            if link.has_attr('data-href'):
+                                data_href = link['data-href']
+                                normalized_data_url = urllib.parse.urljoin(url, data_href)
+                                data_obfuscated = obfuscate_url(normalized_data_url)
+                                if isinstance(data_obfuscated, dict):
+                                    data_obfuscated = data_obfuscated.get('obfuscated_url')
+                                if data_obfuscated:
+                                    link['data-href'] = f"/api/proxy/{data_obfuscated}"
                         except Exception as e:
                             logger.warning(f"Failed to process link {href}: {str(e)}")
                             continue
