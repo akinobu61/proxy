@@ -117,7 +117,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                     else:
                         obfuscated = obfuscated_result
 
-                    proxy_redirect_url = f"/api/proxy/{obfuscated}"
+                    proxy_redirect_url = create_proxy_url(obfuscated)
                     response = Response("", status=resp.status_code)
                     response.headers['Location'] = proxy_redirect_url
                     return response
@@ -173,7 +173,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                 obfuscated = obfuscated_result
 
                             if obfuscated:
-                                proxy_url = f"/api/proxy/{obfuscated}"
+                                proxy_url = create_proxy_url(obfuscated)
                                 link['href'] = proxy_url
 
                                 # onclick属性の処理
@@ -200,7 +200,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                     if isinstance(data_obfuscated, dict):
                                         data_obfuscated = data_obfuscated.get('obfuscated_url')
                                     if data_obfuscated:
-                                        link['data-href'] = f"/api/proxy/{data_obfuscated}"
+                                        link['data-href'] = create_proxy_url(data_obfuscated)
 
                                 # data-url属性の処理
                                 if link.has_attr('data-url'):
@@ -210,7 +210,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                     if isinstance(data_obfuscated, dict):
                                         data_obfuscated = data_obfuscated.get('obfuscated_url')
                                     if data_obfuscated:
-                                        link['data-url'] = f"/api/proxy/{data_obfuscated}"
+                                        link['data-url'] = create_proxy_url(data_obfuscated)
                         except Exception as e:
                             logger.warning(f"Failed to process link {href}: {str(e)}")
                             continue
@@ -223,7 +223,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             else:
                                 obfuscated = obfuscated_result
 
-                            proxy_url = f"/api/proxy/{obfuscated}"
+                            proxy_url = create_proxy_url(obfuscated)
                             link['href'] = proxy_url
 
                 # Process all scripts, images, and other resources
@@ -252,7 +252,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                             else:
                                 obfuscated = obfuscated_result
 
-                            proxy_url = f"/api/proxy/{obfuscated}"
+                            proxy_url = create_proxy_url(obfuscated)
                             tag['src'] = proxy_url
 
                             # スクリプトの内容も処理
@@ -304,7 +304,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                 else:
                                     obfuscated = obfuscated_result
 
-                                proxy_url = f"/api/proxy/{obfuscated}"
+                                proxy_url = create_proxy_url(obfuscated)
                                 style = style.replace(f"url({original_url})", f"url({proxy_url})")
 
                         # Update the style attribute
@@ -341,7 +341,7 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                     else:
                                         obfuscated = obfuscated_result
 
-                                    proxy_url = f"/api/proxy/{obfuscated}"
+                                    proxy_url = create_proxy_url(obfuscated)
                                     meta['content'] = f"{delay}; url={proxy_url}"
 
                 # Convert back to string
@@ -412,6 +412,9 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
 # ウェイト時間を追加（秒）
 DEFAULT_WAIT_TIME = 1  
 
+def create_proxy_url(obfuscated_url):
+    return f"/api/{obfuscated_url}"
+
 @proxy_blueprint.route('/proxy/<path:obfuscated_url>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 @rate_limit
 def proxy_endpoint(obfuscated_url):
@@ -468,7 +471,7 @@ def obfuscate_endpoint():
             obfuscated = obfuscated_result
             expiry = None
 
-        proxy_url = f"{request.url_root.rstrip('/')}/api/proxy/{obfuscated}"
+        proxy_url = create_proxy_url(obfuscated)
 
         response = {
             "original_url": url,
@@ -577,7 +580,7 @@ def direct_url_endpoint():
             obfuscated = obfuscated_result
             expiry = None
 
-        proxy_url = f"/api/proxy/{obfuscated}"
+        proxy_url = create_proxy_url(obfuscated)
 
         response = {"proxy_url": proxy_url}
 
