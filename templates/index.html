@@ -153,7 +153,21 @@
                                 <p class="mt-2">Perfect for quickly creating a proxied version of any website.</p>
                             </div>
                         </div>
-                        <div class="text-center mt-3">
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h4><i data-feather="clock" class="me-2"></i> Request Wait Time Control</h4>
+                                <p>All endpoints support customizable wait times before processing requests:</p>
+                                <div class="bg-dark p-3 rounded">
+                                    <code>/api/proxy/encoded_string.checksum?wait=5</code><br>
+                                    <code>/api/search?q=your+search+query&wait=2</code><br>
+                                    <code>/api/direct_url?url=https://example.com&wait=0</code>
+                                </div>
+                                <p class="mt-2">Default wait time is 3 seconds. Specify <code>wait=0</code> for immediate processing.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
                             <a href="/docs" class="btn btn-primary">View Full API Documentation</a>
                         </div>
                     </div>

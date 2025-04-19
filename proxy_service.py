@@ -5,6 +5,7 @@ from functools import wraps
 from flask import Blueprint, request, Response, jsonify, current_app
 import requests
 from bs4 import BeautifulSoup
+import threading
 from utils import obfuscate_url, deobfuscate_url, is_valid_url
 
 logger = logging.getLogger(__name__)
@@ -267,6 +268,9 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
         logger.error(f"Error proxying request to {url}: {str(e)}")
         return jsonify({"error": f"Error proxying request: {str(e)}", "status": 502}), 502
 
+# ウェイト時間を追加（秒）
+DEFAULT_WAIT_TIME = 3  
+
 @proxy_blueprint.route('/proxy/<path:obfuscated_url>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 @rate_limit
 def proxy_endpoint(obfuscated_url):
@@ -279,7 +283,15 @@ def proxy_endpoint(obfuscated_url):
         if not target_url:
             return jsonify({"error": "Invalid obfuscated URL", "status": 400}), 400
         
-        logger.info(f"Proxying request to {target_url}")
+        # クエリパラメータからウェイト時間を取得（指定がなければデフォルト値を使用）
+        wait_time = request.args.get('wait', DEFAULT_WAIT_TIME, type=float)
+        
+        logger.info(f"Proxying request to {target_url} with {wait_time}s delay")
+        
+        # 指定された時間だけウェイト
+        if wait_time > 0:
+            time.sleep(wait_time)
+        
         return proxy_request(target_url)
     
     except Exception as e:
@@ -339,7 +351,14 @@ def search_endpoint():
         if not is_valid_url(target_url):
             return jsonify({"error": "Invalid search URL", "status": 400}), 400
         
-        logger.info(f"Proxying search request to {target_url}")
+        # クエリパラメータからウェイト時間を取得（指定がなければデフォルト値を使用）
+        wait_time = request.args.get('wait', DEFAULT_WAIT_TIME, type=float)
+        
+        logger.info(f"Proxying search request to {target_url} with {wait_time}s delay")
+        
+        # 指定された時間だけウェイト
+        if wait_time > 0:
+            time.sleep(wait_time)
         
         # Custom headers for search engines
         headers = {
@@ -376,6 +395,14 @@ def direct_url_endpoint():
         
         if not is_valid_url(url):
             return jsonify({"error": "Invalid URL", "status": 400}), 400
+        
+        # クエリパラメータからウェイト時間を取得（指定がなければデフォルト値を使用）
+        wait_time = request.args.get('wait', DEFAULT_WAIT_TIME, type=float)
+        
+        # 指定された時間だけウェイト
+        if wait_time > 0:
+            logger.info(f"Waiting for {wait_time}s before processing direct URL request")
+            time.sleep(wait_time)
         
         # Obfuscate the URL and redirect to the proxy endpoint
         obfuscated = obfuscate_url(url)
