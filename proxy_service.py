@@ -175,15 +175,41 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                 proxy_url = f"/api/proxy/{obfuscated}"
                                 link['href'] = proxy_url
                                 
-                            # data-href属性がある場合も処理
-                            if link.has_attr('data-href'):
-                                data_href = link['data-href']
-                                normalized_data_url = urllib.parse.urljoin(url, data_href)
-                                data_obfuscated = obfuscate_url(normalized_data_url)
-                                if isinstance(data_obfuscated, dict):
-                                    data_obfuscated = data_obfuscated.get('obfuscated_url')
-                                if data_obfuscated:
-                                    link['data-href'] = f"/api/proxy/{data_obfuscated}"
+                                # onclick属性の処理
+                                if link.has_attr('onclick'):
+                                    onclick = link['onclick']
+                                    # URL文字列を検出して置換
+                                    urls = re.findall(r'["\']https?://[^"\']+["\']', onclick)
+                                    for found_url in urls:
+                                        clean_url = found_url.strip('\'"')
+                                        obf_result = obfuscate_url(clean_url)
+                                        if isinstance(obf_result, dict):
+                                            obf_url = obf_result.get('obfuscated_url')
+                                        else:
+                                            obf_url = obf_result
+                                        if obf_url:
+                                            onclick = onclick.replace(found_url, f'"/api/proxy/{obf_url}"')
+                                    link['onclick'] = onclick
+                                
+                                # data-href属性の処理
+                                if link.has_attr('data-href'):
+                                    data_href = link['data-href']
+                                    normalized_data_url = urllib.parse.urljoin(url, data_href)
+                                    data_obfuscated = obfuscate_url(normalized_data_url)
+                                    if isinstance(data_obfuscated, dict):
+                                        data_obfuscated = data_obfuscated.get('obfuscated_url')
+                                    if data_obfuscated:
+                                        link['data-href'] = f"/api/proxy/{data_obfuscated}"
+                                
+                                # data-url属性の処理
+                                if link.has_attr('data-url'):
+                                    data_url = link['data-url']
+                                    normalized_data_url = urllib.parse.urljoin(url, data_url)
+                                    data_obfuscated = obfuscate_url(normalized_data_url)
+                                    if isinstance(data_obfuscated, dict):
+                                        data_obfuscated = data_obfuscated.get('obfuscated_url')
+                                    if data_obfuscated:
+                                        link['data-url'] = f"/api/proxy/{data_obfuscated}"
                         except Exception as e:
                             logger.warning(f"Failed to process link {href}: {str(e)}")
                             continue
@@ -227,6 +253,22 @@ def proxy_request(url, method=None, headers=None, data=None, is_resource=False):
                                 
                             proxy_url = f"/api/proxy/{obfuscated}"
                             tag['src'] = proxy_url
+                            
+                            # スクリプトの内容も処理
+                            if tag.name == 'script' and tag.string:
+                                content = tag.string
+                                # URL文字列を検出して置換
+                                urls = re.findall(r'["\']https?://[^"\']+["\']', content)
+                                for found_url in urls:
+                                    clean_url = found_url.strip('\'"')
+                                    obf_result = obfuscate_url(clean_url)
+                                    if isinstance(obf_result, dict):
+                                        obf_url = obf_result.get('obfuscated_url')
+                                    else:
+                                        obf_url = obf_result
+                                    if obf_url:
+                                        content = content.replace(found_url, f'"/api/proxy/{obf_url}"')
+                                tag.string = content
                 
                 # Process inline styles with URLs (background-image, etc.)
                 for tag in soup.find_all(style=True):
